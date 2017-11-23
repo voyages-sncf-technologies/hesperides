@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('SHUT') {
             steps {
-                sh 'echo "hello"'
+                sh 'ssh uslrdku1@deadbabyboy-bck "echo Hello"'
             }
         }
     }
