@@ -3,10 +3,8 @@ pipeline {
     stages {
         stage('SHUT') {
             steps {
-                node {
-                    sshagent (credentials: ['2583bb80-8a00-4461-8b13-3a4fe8931855']) {
-                        sh 'echo Hello'
-                    }
+                sshagent(['2583bb80-8a00-4461-8b13-3a4fe8931855']) {
+                    echo "Building environment"
                 }
             }
         }
