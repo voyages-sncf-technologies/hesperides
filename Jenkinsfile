@@ -8,6 +8,13 @@ pipeline {
                 }
             }
         }
+        stage('SHUT') {
+            steps {
+                sshagent(['2583bb80-8a00-4461-8b13-3a4fe8931855']) {
+                    sh 'ssh washesa3@deadbabyboy-bck "sudo /usr/bin/puppet agent -t --certname deadbabyboy.socrate.vsct.fr-stagging"'
+                }
+            }
+        }
         stage('BOOT') {
             steps {
                 sshagent(['2583bb80-8a00-4461-8b13-3a4fe8931855']) {
