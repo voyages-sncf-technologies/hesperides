@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    parameters {
+        string(name: 'user_app', description: 'User Applicatif')
+        string(name: 'user_usine', description: 'User Usine')
+        string(name: 'machine', description: 'Nom de la machine où est déployé Hespérides')
+    }
     stages {
         stage('SHUT') {
             steps {
