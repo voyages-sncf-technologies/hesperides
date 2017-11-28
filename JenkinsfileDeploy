@@ -38,19 +38,19 @@ pipeline {
                 }
             }
         }
+    }
         
-        post {
-            success {
-                script {
-                    notificationsUtils = new NotificationsUtils(jenkinsWorkflowScript: this, proxy: 'http://proxy-hpr:80', authToken: 'y5Wookis5ygwBWudp6iucYVXfJ1jdglCOr5yb3tH', roomNumber: '4234577')
-                    notificationsUtils.sendMessageToHipchat("Déploiement", env.machine, 'Déploiement réussi', '', 0)
-                }
+    post {
+        success {
+            script {
+                notificationsUtils = new NotificationsUtils(jenkinsWorkflowScript: this, proxy: 'http://proxy-hpr:80', authToken: 'y5Wookis5ygwBWudp6iucYVXfJ1jdglCOr5yb3tH', roomNumber: '4234577')
+                notificationsUtils.sendMessageToHipchat("Déploiement", env.machine, 'Déploiement réussi', '', 0)
             }
-            failure {
-                script {
-                    notificationsUtils = new NotificationsUtils(jenkinsWorkflowScript: this, proxy: 'http://proxy-hpr:80', authToken: 'y5Wookis5ygwBWudp6iucYVXfJ1jdglCOr5yb3tH', roomNumber: '4234577')
-                    notificationsUtils.sendMessageToHipchat("Déploiement", env.machine, 'Echec du déploiement', '', 1)
-                }
+        }
+        failure {
+            script {
+                notificationsUtils = new NotificationsUtils(jenkinsWorkflowScript: this, proxy: 'http://proxy-hpr:80', authToken: 'y5Wookis5ygwBWudp6iucYVXfJ1jdglCOr5yb3tH', roomNumber: '4234577')
+                notificationsUtils.sendMessageToHipchat("Déploiement", env.machine, 'Echec du déploiement', '', 1)
             }
         }
     }
