@@ -1,9 +1,9 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'user_app', description: 'User Applicatif')
-        string(name: 'user_usine', description: 'User Usine')
-        string(name: 'machine', description: 'Nom de la machine où est déployé Hespérides')
+        string(name: 'user_app', description: 'User Applicatif', defaultValue: 'washesa3')
+        string(name: 'user_usine', description: 'User Usine', defaultValue: 'uslrdku1')
+        string(name: 'machine', description: 'Nom de la machine où est déployé Hespérides', defaultValue: 'deadbabyboy-bck')
     }
     stages {
         stage('SHUT') {
