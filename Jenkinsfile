@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image "jimador/docker-jdk-8-maven-node"
+        }
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -8,8 +12,10 @@ pipeline {
         }
         stage('Build') {
             steps {
-                withMaven {
-                    sh 'mvn clean verify -U'
+                catchError {
+                    withMaven(maven: 'maven3') {
+                        sh 'mvn clean verify -U'
+                    }
                 }
             }
         }
