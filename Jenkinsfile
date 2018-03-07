@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image "jimador/docker-jdk-8-maven-node"
-        }
-    }
+    agent any
     stages {
         stage('Checkout') {
             steps {
@@ -11,6 +7,11 @@ pipeline {
             }
         }
         stage('Build') {
+            agent {
+                node {
+                    label 'maven3'
+                }
+            }
             steps {
                 catchError {
                     withMaven(mavenSettingsConfig: 'local_maven_settings') {
