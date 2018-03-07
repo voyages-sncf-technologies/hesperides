@@ -13,7 +13,7 @@ pipeline {
         stage('Build') {
             steps {
                 catchError {
-                    withMaven(maven: 'maven3') {
+                    withMaven(mavenSettingsConfig: 'local_maven_settings')
                         sh 'mvn clean verify -U'
                     }
                 }
