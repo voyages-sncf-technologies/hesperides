@@ -14,7 +14,8 @@ pipeline {
             }
             steps {
                 catchError {
-                    withMaven(mavenSettingsConfig: 'local_maven_settings') {
+                    withMaven(mavenSettingsConfig: 'global_maven_settings') {
+                        sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
                         sh 'mvn clean verify -U'
                     }
                 }
