@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        node {
+            label 'maven3'
+        }
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -7,16 +11,11 @@ pipeline {
             }
         }
         stage('Build') {
-            agent {
-                node {
-                    label 'maven3'
-                }
-            }
             steps {
                 catchError {
                     withMaven(mavenSettingsConfig: 'global_maven_settings') {
                         sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
-                        sh 'mvn clean verify -U'
+                        sh 'mvn clean package -U'
                     }
                 }
             }
