@@ -12,11 +12,9 @@ pipeline {
         }
         stage('Build') {
             steps {
-                catchError {
-                    withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                        sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
-                        sh 'mvn clean package -U'
-                    }
+                withMaven(mavenSettingsConfig: 'global_maven_settings') {
+                    sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
+                    sh 'mvn clean package -U'
                 }
             }
         }
