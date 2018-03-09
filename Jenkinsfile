@@ -4,6 +4,9 @@ pipeline {
             label 'maven3'
         }
     }
+    triggers {
+        cron('H */30 * * 1-5')
+    }
     stages {
         stage('Checkout') {
             steps {
