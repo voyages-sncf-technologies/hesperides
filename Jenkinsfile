@@ -13,11 +13,11 @@ pipeline {
                 git url: 'https://github.com/voyages-sncf-technologies/hesperides.git', branch: 'feature/springboot'
             }
         }
-        stage('Build') {
+        stage('Build & test') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
-                    sh 'mvn clean package -U -Dmaven.test.skip=true'
+                    sh 'mvn clean package -U'
                 }
             }
         }
