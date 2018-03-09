@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/voyages-sncf-technologies/hesperides.git', branch: 'feature/springboot'
+                git url: 'https://github.com/victorsalaun/hesperides.git', branch: 'feature/springboot_docker'
             }
         }
         stage('Build & test') {
@@ -18,8 +18,9 @@ pipeline {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
                     sh 'mvn clean package -DskipTests -U'
-                    stash name: 'jar', includes: 'boostrap/target/*.jar'
                 }
+                sh 'ls'
+                stash name: 'workspace', includes: '*'
             }
         }
         /*stage('Upload to Nexus') {
