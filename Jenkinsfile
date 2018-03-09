@@ -29,6 +29,11 @@ pipeline {
             }
         }*/
         stage('Build image docker') {
+            agent {
+                node {
+                    label 'docker'
+                }
+            }
             steps {
                 script {
                     docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
