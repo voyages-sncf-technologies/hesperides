@@ -41,6 +41,7 @@ pipeline {
                     docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
                         unstash 'workspace'
                         sh "ls"
+                        sh "docker login --username admgit --password '7meJ%G$2' --email deploy@build.fr docker-vsct.pkg.cloud.socrate.vsct.fr"
                         sh "docker build --build-arg http_proxy=http://proxy-hpr:80 --build-arg https_proxy=https://proxy-hpr:80 . -t hesperides/hesperides-spring:latest-snapshot"
                         dockerImage = docker.image("hesperides/hesperides-spring:latest-snapshot")
                         dockerImage.push()
