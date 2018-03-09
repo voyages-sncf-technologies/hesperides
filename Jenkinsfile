@@ -18,6 +18,7 @@ pipeline {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
                     sh 'mvn clean package -DskipTests -U'
+                    stash name: 'jar', includes: 'boostrap/target/*.jar'
                 }
             }
         }
@@ -37,6 +38,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
+                        unstash 'jar'
+                        sh "ls"
                         sh "docker build --build-arg http_proxy=http://proxy-hpr:80 --build-arg https_proxy=https://proxy-hpr:80 . -t hesperides/hesperides-spring:latest-snapshot"
                         dockerImage = docker.image("hesperides/hesperides-spring:latest-snapshot")
                         dockerImage.push()
