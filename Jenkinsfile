@@ -17,7 +17,14 @@ pipeline {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
-                    sh 'mvn clean package -U'
+                    sh 'mvn clean package -DskipTests -U'
+                }
+            }
+        }
+        stage('Upload to Nexus') {
+            steps {
+                withMaven(mavenSettingsConfig: 'global_maven_settings') {
+                    sh 'mvn clean deploy -DskipTests -U'
                 }
             }
         }
