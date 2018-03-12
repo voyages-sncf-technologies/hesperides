@@ -49,7 +49,7 @@ pipeline {
                 }
             }
         }
-        stage('Analyse Sonar') {
+        /*stage('Analyse Sonar') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
@@ -57,6 +57,6 @@ pipeline {
                     sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
                 }
             }
-        }
+        }*/
     }
 }
