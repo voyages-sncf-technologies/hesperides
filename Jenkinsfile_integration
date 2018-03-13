@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/victorsalaun/hesperides.git', branch: 'feature/springboot'
+                git url: 'https://github.com/voyages-sncf-technologies/hesperides.git', branch: 'feature/springboot'
             }
         }
         stage('Build & test') {
