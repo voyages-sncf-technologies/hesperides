@@ -16,8 +16,8 @@ pipeline {
         stage('Build & test') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                    sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
-                    sh 'mvn clean package -U'
+                    sh "./mvnw help:effective-settings"
+                    sh './mvnw clean package -U'
                 }
                 sh 'ls'
                 stash name: 'workspace', includes: '*'
@@ -26,7 +26,7 @@ pipeline {
         /*stage('Upload to Nexus') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                    sh 'mvn clean deploy -DskipTests -U'
+                    sh './mvnw clean deploy -DskipTests -U'
                 }
             }
         }*/
@@ -52,11 +52,16 @@ pipeline {
         /*stage('Analyse Sonar') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                    sh "export PATH=$MVN_CMD_DIR:$PATH && mvn help:effective-settings"
-                    sh 'mvn clean compile'
-                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
+                    sh "./mvnw help:effective-settings"
+                    sh './mvnw clean compile'
+                    sh './mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
                 }
             }
         }*/
+    }
+    post {
+        always {
+            deleteDir()
+        }
     }
 }
