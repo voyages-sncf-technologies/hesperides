@@ -4,6 +4,6 @@ ENV JAVA_OPTS ${JAVA_OPTS} -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/trusto
 
 COPY certificates/trustore /etc/ssl/certs/java/
 
-ENTRYPOINT ["/usr/bin/java ${JAVA_OPTS}"]
+ENTRYPOINT ["/usr/bin/java", "${JAVA_OPTS}"]
 
 EXPOSE 8080
