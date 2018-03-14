@@ -4,6 +4,6 @@ COPY certificates/trustore /etc/ssl/certs/java/
 
 ENTRYPOINT ["/usr/bin/java"]
 
-CMD ["${JAVA_OPTS}", "-jar","/hesperides-spring.jar"]
+CMD ["-jar","/hesperides-spring.jar"]
 
 EXPOSE 8080
