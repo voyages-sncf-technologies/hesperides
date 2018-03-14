@@ -1,7 +1,7 @@
 pipeline {
     agent {
         node {
-            label 'java8'
+            label 'maven3'
         }
     }
     triggers {
