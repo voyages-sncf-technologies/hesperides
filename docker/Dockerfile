@@ -1,4 +1,4 @@
-FROM hesperides/hesperides:feature-springboot_docker
+FROM hesperides/hesperides:feature_springboot
 
 COPY certificates/trustore /etc/ssl/certs/java/
 
