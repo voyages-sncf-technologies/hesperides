@@ -1,4 +1,5 @@
-FROM hesperides/hesperides:feature_springboot
+ARG  CODE_VERSION
+FROM hesperides/hesperides:${CODE_VERSION}
 
 COPY certificates/trustore /etc/ssl/certs/java/
 

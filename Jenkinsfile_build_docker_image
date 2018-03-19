@@ -1,0 +1,34 @@
+pipeline {
+    agent {
+        node {
+            label 'docker'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    parameters {
+        string(name: 'DOCKER_TAG', defaultValue: 'feature_springboot', description: 'Docker tag\'s name')
+    }
+    stages {
+        stage('Generate Dockerfile') {
+            steps {
+                script {
+
+                }
+            }
+        }
+        stage('Build docker image') {
+            steps {
+                script {
+                    docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
+                        sh "docker login --username admgit --password '7meJ%G\$2' docker-vsct.pkg.cloud.socrate.vsct.fr"
+                        sh "docker build --pull --build-arg http_proxy=http://proxy-hpr:80 --build-arg https_proxy=https://proxy-hpr:80 --build-arg CODE_VERSION=${params.DOCKER_TAG} ./docker -t hesperides/hesperides:${params.DOCKER_TAG}"
+                        dockerImage = docker.image("hesperides/hesperides:${params.DOCKER_TAG}")
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+    }
+}
