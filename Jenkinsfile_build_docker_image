@@ -11,13 +11,6 @@ pipeline {
         string(name: 'DOCKER_TAG', defaultValue: 'feature_springboot', description: 'Docker tag\'s name')
     }
     stages {
-        stage('Generate Dockerfile') {
-            steps {
-                script {
-
-                }
-            }
-        }
         stage('Build docker image') {
             steps {
                 script {
