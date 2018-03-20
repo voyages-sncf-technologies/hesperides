@@ -9,12 +9,12 @@ pipeline {
             steps {
                 script {
                     Map optionsRundeck = [
-                            composant             : "DOCKER-dockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot",
-                            instances             : "HESA11DCK",
+                            composant             : ["DOCKER-dockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot"],
+                            instances             : ["HESA11DCK"],
                             trigramme             : "HES",
-                            techno                : "DOCKER",
+                            techno                : ["DOCKER"],
                             TargetNodes           : "HESREL1DOCKERdockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot-CIAOBABY",
-                            loglevel              : 3,
+                            loglevel              : 5,
                             plateforme            : "REL1",
                             serveur               : "ciaobaby",
 
