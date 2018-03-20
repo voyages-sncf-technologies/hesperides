@@ -20,7 +20,7 @@ pipeline {
 
 
                     ]
-                    deployId = rundeckPlatform.startAndWaitWithAutofill("HES", "Instance_Management/Reboot_Instance", optionsRundeck)
+                    deployId = devrundeck.startAndWaitWithAutofill("HES", "Instance_Management/Reboot_Instance", optionsRundeck)
                 }
             }
         }
