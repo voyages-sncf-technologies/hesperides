@@ -1,63 +1,29 @@
+#!groovy
+
+@Library(["rundeck@2.1.5"]) _
+
 pipeline {
-    agent {
-        node {
-            label 'maven3'
-        }
-    }
-    triggers {
-        cron('H */30 * * 1-5')
-    }
+    agent { node { label 'default||master' } }
     stages {
-        stage('Checkout') {
-            steps {
-                git url: 'https://github.com/victorsalaun/hesperides.git', branch: 'feature/springboot'
-            }
-        }
-        stage('Build & test') {
-            steps {
-                withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                    sh "./mvnw help:effective-settings"
-                    sh './mvnw clean package -U'
-                }
-                sh 'ls'
-                stash name: 'workspace', includes: '*'
-            }
-        }
-        /*stage('Upload to Nexus') {
-            steps {
-                withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                    sh './mvnw clean deploy -DskipTests -U'
-                }
-            }
-        }*/
-        stage('Build image docker') {
-            agent {
-                node {
-                    label 'docker'
-                }
-            }
+        stage('Deploy docker') {
             steps {
                 script {
-                    docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
-                        unstash 'workspace'
-                        sh "ls"
-                        sh "docker login --username admgit --password '7meJ%G\$2' --email deploy@build.fr docker-vsct.pkg.cloud.socrate.vsct.fr"
-                        sh "docker build --build-arg http_proxy=http://proxy-hpr:80 --build-arg https_proxy=https://proxy-hpr:80 . -t hesperides/hesperides-spring:latest-snapshot"
-                        dockerImage = docker.image("hesperides/hesperides-spring:latest-snapshot")
-                        dockerImage.push()
-                    }
+                    Map optionsRundeck = [
+                            composant             : "DOCKER-dockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot",
+                            instances             : "HESA11DCK"
+                            trigramme             : "HES",
+                            techno                : "DOCKER",
+                            TargetNodes           : "HESREL1DOCKERdockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot-CIAOBABY",
+                            loglevel              : 3,
+                            plateforme            : "REL1",
+                            serveur               : "ciaobaby",
+
+
+                    ]
+                    deployId = rundeckPlatform.startAndWaitWithAutofill("HES", "Instance_Management/Reboot_Instance", optionsRundeck)
                 }
             }
         }
-        /*stage('Analyse Sonar') {
-            steps {
-                withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                    sh "./mvnw help:effective-settings"
-                    sh './mvnw clean compile'
-                    sh './mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
-                }
-            }
-        }*/
     }
     post {
         always {
