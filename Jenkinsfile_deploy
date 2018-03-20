@@ -14,7 +14,7 @@ pipeline {
                             trigramme             : "HES",
                             techno                : ["DOCKER"],
                             TargetNodes           : "HESREL1DOCKERdockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot-CIAOBABY",
-                            loglevel              : 5,
+                            loglevel              : "5",
                             plateforme            : "REL1",
                             serveur               : "ciaobaby",
 
