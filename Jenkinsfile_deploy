@@ -36,13 +36,13 @@ pipeline {
             steps {
                 script {
                     for (docker in dockers) {
-                        /*for (host in dockers['HOSTS']) {
-                            Map optionsRundeck = [
+                        for (host in dockers['HOSTS']) {
+                            /*Map optionsRundeck = [
                                     refresh_puppet_agent: "Complet",
                                     serveur             : [host['name']]
                             ]
-                            devrundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
-                        }*/
+                            devrundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)*/
+                        }
                     }
 
                 }
