@@ -2,7 +2,7 @@
 
 @Library(["rundeck@2.1.5", "toolbox-yaml"]) _
 
-app = "CCL"
+app = "HES"
 node {
     platformsList = String.join("\n", toolbox.getEnvironments(app))
 }
