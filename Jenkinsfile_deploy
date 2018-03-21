@@ -29,13 +29,14 @@ pipeline {
                     // Set params as they will be used later
                     platform = PLATFORM
                     dockers = horsprodtoolbox.yPath("/${app}/${platform}/DOCKER")
+                    dockersJson = readJSON text: "${dockers}"
                 }
             }
         }
         stage('Deploy docker image') {
             steps {
                 script {
-                    for (docker in dockers) {
+                    for (docker in dockersJson) {
                         for (host in docker['HOSTS']) {
                             /*Map optionsRundeck = [
                                     refresh_puppet_agent: "Complet",
