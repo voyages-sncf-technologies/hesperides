@@ -37,7 +37,8 @@ pipeline {
             steps {
                 script {
                     for (docker in dockersJson) {
-                        for (host in docker['HOSTS']) {
+                        dockerJson = readJSON text: "${docker}"
+                        for (host in dockerJson['HOSTS']) {
                             /*Map optionsRundeck = [
                                     refresh_puppet_agent: "Complet",
                                     serveur             : [host['name']]
