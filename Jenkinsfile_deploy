@@ -36,7 +36,7 @@ pipeline {
             steps {
                 script {
                     for (docker in dockers) {
-                        for (host in dockers['HOSTS']) {
+                        for (host in docker['HOSTS']) {
                             /*Map optionsRundeck = [
                                     refresh_puppet_agent: "Complet",
                                     serveur             : [host['name']]
