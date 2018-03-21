@@ -40,6 +40,8 @@ pipeline {
                     print dockersJson
                     print dockersJson['result']
                     print dockersJson['result'][0]
+                    print dockersJson['result'][0]['HOSTS']
+                    print dockersJson['result'][0]['HOSTS'][0]['name']
                     /*for (docker in dockersJson) {
                         for (host in dockersJson[index]['HOSTS']) {
                             /*Map optionsRundeck = [
