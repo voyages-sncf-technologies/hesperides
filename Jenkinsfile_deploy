@@ -30,7 +30,7 @@ pipeline {
 
 
                     ]
-                    deployId = devrundeck.startAndWaitWithAutofill("HES", "Outils/Reboot_Instance", optionsRundeck)
+                    deployId = devrundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
                 }
             }
         }
