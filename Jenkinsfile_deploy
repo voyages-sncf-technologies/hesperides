@@ -28,6 +28,7 @@ pipeline {
                 script {
                     // Set params as they will be used later
                     platform = PLATFORM
+                    echo  horsprodtoolbox.yPath("/${app}/${platform}/DOCKER")
                 }
             }
         }
@@ -48,10 +49,10 @@ pipeline {
                     Map optionsRundeck = [
                             composant  : "DOCKER-dockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot",
                             instances  : "HESA11DCK",
-                            trigramme  : "HES",
+                            trigramme  : app,
                             techno     : "DOCKER",
                             TargetNodes: "HESREL1DOCKERdockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot-CIAOBABY",
-                            plateforme : "REL1",
+                            plateforme : platform,
                             serveur    : "ciaobaby",
 
 
