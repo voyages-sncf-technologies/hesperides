@@ -1,6 +1,6 @@
 #!groovy
 
-@Library(["rundeck@2.1.5"]) _
+@Library(["rundeck@2.1.5", "toolbox-yaml"]) _
 
 app = "CCL"
 platformsList = String.join("\n", toolbox.getEnvironments(app))
