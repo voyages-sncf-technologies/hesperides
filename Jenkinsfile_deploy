@@ -16,7 +16,7 @@ pipeline {
                 }
             }
         }
-        /*stage('Deploy docker') {
+        stage('Restart docker image') {
             steps {
                 script {
                     Map optionsRundeck = [
@@ -25,16 +25,15 @@ pipeline {
                             trigramme             : "HES",
                             techno                : ["DOCKER"],
                             TargetNodes           : "HESREL1DOCKERdockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot-CIAOBABY",
-                            loglevel              : "5",
                             plateforme            : "REL1",
                             serveur               : "ciaobaby",
 
 
                     ]
-                    deployId = devrundeck.startAndWaitWithAutofill("HES", "Instance_Management/Reboot_Instance", optionsRundeck)
+                    deployId = devrundeck.startAndWaitWithAutofill("HES", "Outils/Reboot_Instance", optionsRundeck)
                 }
             }
-        }*/
+        }
     }
     post {
         always {
