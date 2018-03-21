@@ -20,17 +20,17 @@ pipeline {
             steps {
                 script {
                     Map optionsRundeck = [
-                            composant             : ["DOCKER-dockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot"],
-                            instances             : ["HESA11DCK"],
-                            trigramme             : "HES",
-                            techno                : ["DOCKER"],
-                            TargetNodes           : "HESREL1DOCKERdockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot-CIAOBABY",
-                            plateforme            : "REL1",
-                            serveur               : "ciaobaby",
+                            composant  : "DOCKER-dockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot",
+                            instances  : "HESA11DCK",
+                            trigramme  : "HES",
+                            techno     : "DOCKER",
+                            TargetNodes: "HESREL1DOCKERdockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot-CIAOBABY",
+                            plateforme : "REL1",
+                            serveur    : "ciaobaby",
 
 
                     ]
-                    deployId = devrundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
+                    devrundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
                 }
             }
         }
