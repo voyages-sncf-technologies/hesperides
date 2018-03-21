@@ -2,9 +2,34 @@
 
 @Library(["rundeck@2.1.5"]) _
 
+app = "CCL"
+platformsList = String.join("\n", toolbox.getEnvironments(app))
+
 pipeline {
-    agent { node { label 'default||master' } }
+    agent {
+        node {
+            label 'default||master'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
     stages {
+        stage('Initialisation des Paramètres') {
+            input {
+                message "Paramètres de déploiement"
+                ok "OK"
+                parameters {
+                    choice(choices: platformsList, name: "PLATFORM", description: "OBLIGATOIRE : Plateforme sur laquelle sera fait le déploiement")
+                }
+            }
+            steps {
+                script {
+                    // Set params as they will be used later
+                    platform = PLATFORM
+                }
+            }
+        }
         stage('Deploy docker image') {
             steps {
                 script {
