@@ -28,18 +28,23 @@ pipeline {
                 script {
                     // Set params as they will be used later
                     platform = PLATFORM
-                    echo  horsprodtoolbox.yPath("/${app}/${platform}/DOCKER")
+                    dockers = horsprodtoolbox.yPath("/${app}/${platform}/DOCKER")
                 }
             }
         }
         stage('Deploy docker image') {
             steps {
                 script {
-                    Map optionsRundeck = [
-                            refresh_puppet_agent: "Complet",
-                            serveur             : ["ciaobaby"]
-                    ]
-                    devrundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
+                    for (docker in dockers) {
+                        for (host in dockers["HOSTS"]) {
+                            Map optionsRundeck = [
+                                    refresh_puppet_agent: "Complet",
+                                    serveur             : [host["name"]]
+                            ]
+                            devrundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
+                        }
+                    }
+
                 }
             }
         }
