@@ -5,7 +5,18 @@
 pipeline {
     agent { node { label 'default||master' } }
     stages {
-        stage('Deploy docker') {
+        stage('Deploy docker image') {
+            steps {
+                script {
+                    Map optionsRundeck = [
+                            refresh_puppet_agent: "Complet",
+                            serveur             : ["ciaobaby"]
+                    ]
+                    devrundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
+                }
+            }
+        }
+        /*stage('Deploy docker') {
             steps {
                 script {
                     Map optionsRundeck = [
@@ -23,7 +34,7 @@ pipeline {
                     deployId = devrundeck.startAndWaitWithAutofill("HES", "Instance_Management/Reboot_Instance", optionsRundeck)
                 }
             }
-        }
+        }*/
     }
     post {
         always {
