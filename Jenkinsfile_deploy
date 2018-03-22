@@ -36,23 +36,22 @@ pipeline {
         stage('Deploy docker image') {
             steps {
                 script {
-                    int index = 0
                     print dockersJson
                     print dockersJson['result']
                     print dockersJson['result'][0]
                     print dockersJson['result'][0]['HOSTS']
                     print dockersJson['result'][0]['HOSTS'][0]
                     print dockersJson['result'][0]['HOSTS'][0]['NAME']
-                    /*for (docker in dockersJson) {
-                        for (host in dockersJson[index]['HOSTS']) {
-                            /*Map optionsRundeck = [
+
+                    for (docker in dockersJson['result']) {
+                        for (host in docker['HOSTS']) {
+                            Map optionsRundeck = [
                                     refresh_puppet_agent: "Complet",
                                     serveur             : [host['name']]
                             ]
                             devrundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
                         }
-                        index++
-                    }*/
+                    }
 
                 }
             }
