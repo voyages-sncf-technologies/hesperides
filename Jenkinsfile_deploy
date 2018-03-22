@@ -52,18 +52,24 @@ pipeline {
         stage('Restart docker image') {
             steps {
                 script {
-                    Map optionsRundeck = [
-                            composant  : "DOCKER-dockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot",
-                            instances  : "HESA11DCK",
-                            trigramme  : app,
-                            techno     : "DOCKER",
-                            TargetNodes: "HESREL1DOCKERdockerregistry.socrate.vsct.fr/hesperides/hesperides:feature_springboot-CIAOBABY",
-                            plateforme : platform,
-                            serveur    : "ciaobaby",
+                    for (docker in dockersJson['result']) {
+                        for (host in docker['HOSTS']) {
+                            for (instance in host['INSTANCES']) {
+                                Map optionsRundeck = [
+                                        composant  : "DOCKER-${docker["IMAGE"]}",
+                                        instances  : instance['NAME'],
+                                        trigramme  : app,
+                                        techno     : "DOCKER",
+                                        TargetNodes: "${app}${platform}DOCKER${docker["IMAGE"]}${host['NAME']}",
+                                        plateforme : platform,
+                                        serveur    : host['NAME'].toLowerCase(),
 
 
-                    ]
-                    devrundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
+                                ]
+                                devrundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
+                            }
+                        }
+                    }
                 }
             }
         }
