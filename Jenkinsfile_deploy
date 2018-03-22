@@ -40,7 +40,7 @@ pipeline {
                         for (host in docker['HOSTS']) {
                             Map optionsRundeck = [
                                     refresh_puppet_agent: "Complet",
-                                    serveur             : [host['NAME']]
+                                    serveur             : [host['NAME'].toLowerCase()]
                             ]
                             devrundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
                         }
