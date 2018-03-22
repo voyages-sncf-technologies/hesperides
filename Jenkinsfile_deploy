@@ -60,7 +60,7 @@ pipeline {
                                         instances  : instance['NAME'],
                                         trigramme  : app,
                                         techno     : "DOCKER",
-                                        TargetNodes: "${app}${platform}DOCKER${docker["IMAGE"]}${host['NAME']}",
+                                        TargetNodes: "${app}${platform}DOCKER${docker["IMAGE"]}-${host['NAME']}",
                                         plateforme : platform,
                                         serveur    : host['NAME'].toLowerCase(),
 
