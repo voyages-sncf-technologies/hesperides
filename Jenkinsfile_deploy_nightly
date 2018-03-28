@@ -13,7 +13,9 @@ pipeline {
     }
     stages {
         stage('Launch nigthly job') {
-            build job: "deploy", parameters: [[$class: 'StringParameterValue', name: 'PLATFORM', value: params.PLATFORM]]
+            steps {
+                build job: "deploy", parameters: [[$class: 'StringParameterValue', name: 'PLATFORM', value: params.PLATFORM]]
+            }
         }
     }
     post {
