@@ -15,13 +15,16 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
+    triggers {
+        cron '@daily'
+    }
     stages {
         stage('Initialisation des Paramètres') {
             input {
                 message "Paramètres de déploiement"
                 ok "OK"
                 parameters {
-                    choice(choices: platformsList, name: "PLATFORM", description: "OBLIGATOIRE : Plateforme sur laquelle sera fait le déploiement")
+                    choice(choices: platformsList, name: "PLATFORM", description: "OBLIGATOIRE : Plateforme sur laquelle sera fait le déploiement", defaultValue: "REL1")
                 }
             }
             steps {
