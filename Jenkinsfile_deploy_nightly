@@ -1,0 +1,24 @@
+#!groovy
+pipeline {
+    agent {
+        node {
+            label 'default||master'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    parameters {
+        string(name: "PLATFORM", description: "OBLIGATOIRE : Plateforme sur laquelle sera fait le déploiement", defaultValue: "REL1")
+    }
+    stages {
+        stage('Launch nigthly job') {
+            build job: "deploy", parameters: [[$class: 'StringParameterValue', name: 'PLATFORM', value: params.PLATFORM]]
+        }
+    }
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}
