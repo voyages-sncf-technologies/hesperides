@@ -9,9 +9,6 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
-    triggers {
-        cron '@daily'
-    }
     parameters {
         string(name: 'DOCKER_TAG', defaultValue: 'feature_springboot', description: 'Docker tag\'s name')
     }

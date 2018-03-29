@@ -1,0 +1,29 @@
+#!groovy
+pipeline {
+    agent {
+        node {
+            label 'default||master'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    triggers {
+        cron('* 1 * * 1-5')
+    }
+    parameters {
+        string(name: 'DOCKER_TAG', defaultValue: 'feature_springboot', description: 'Docker tag\'s name')
+    }
+    stages {
+        stage('Launch nigthly job') {
+            steps {
+                build job: "build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: params.DOCKER_TAG]]
+            }
+        }
+    }
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}
