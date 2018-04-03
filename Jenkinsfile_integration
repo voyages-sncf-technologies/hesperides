@@ -21,7 +21,7 @@ pipeline {
         stage('Build & test') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                    sh 'export MAVEN_OPTS="-gs $GLOBAL_MVN_SETTINGS" && ./mvnw help:effective-settings'
+                    sh 'export MAVEN_OPTS="-gs $GLOBAL_MVN_SETTINGS" && mvn help:effective-settings'
                     //sh 'export MAVEN_OPTS="-Dhttp.proxyHost=proxy-lil -Dhttp.proxyPort=80 -Dhttps.proxyHost=proxy-lil -Dhttps.proxyPort=80" && ./mvnw clean package -U --global-settings $GLOBAL_MVN_SETTINGS '
                     sh 'mvn clean package -U'
                 }
