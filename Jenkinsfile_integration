@@ -10,7 +10,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     parameters {
-        string(name: 'BRANCH_NAME', defaultValue: 'feature_springboot', description: 'Github branch\'s name')
+        string(name: 'BRANCH_NAME', defaultValue: 'feature/springboot', description: 'Github branch\'s name')
     }
     stages {
         stage('Checkout') {
@@ -21,10 +21,9 @@ pipeline {
         stage('Build & test') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                    sh 'env'
-                    //sh 'export MAVEN_OPTS="-gs $GLOBAL_MVN_SETTINGS" && ./mvnw help:effective-settings'
+                    sh 'export MAVEN_OPTS="-gs $GLOBAL_MVN_SETTINGS" && ./mvnw help:effective-settings'
                     //sh 'export MAVEN_OPTS="-Dhttp.proxyHost=proxy-lil -Dhttp.proxyPort=80 -Dhttps.proxyHost=proxy-lil -Dhttps.proxyPort=80" && ./mvnw clean package -U --global-settings $GLOBAL_MVN_SETTINGS '
-                    sh ' ./mvnw clean package -U '
+                    sh 'mvn clean package -U'
                 }
                 sh 'ls'
                 stash name: 'workspace', includes: '*'
