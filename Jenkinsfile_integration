@@ -3,7 +3,7 @@
 pipeline {
     agent {
         node {
-            label 'docker'
+            label 'maven3'
         }
     }
     options {
@@ -21,8 +21,8 @@ pipeline {
         stage('Build') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                    sh "mvn help:effective-settings"
-                    sh 'mvn clean package -U -Dmaven.test.skip=true'
+                    //sh "mvn help:effective-settings"
+                    sh ' ./mvnw clean package -U '
                 }
             }
         }
@@ -34,14 +34,19 @@ pipeline {
                 }
             }
         }*/
-        stage('Integration Tests') {
+        /*stage('Integration Tests') {
+            agent {
+                docker {
+                    image 'maven:3'
+                }
+            }
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     sh "mvn help:effective-settings"
                     sh 'mvn -pl tests/integration verify -P integration-test'
                 }
             }
-        }
+        }*/
         /*stage('Upload to Nexus') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
