@@ -26,15 +26,20 @@ pipeline {
                 }
             }
         }
-        stage('Tests') {
+        /*stage('Tests') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     sh "mvn help:effective-settings"
                     sh 'mvn clean test'
                 }
             }
-        }
+        }*/
         stage('Integration Tests') {
+            agent {
+                node {
+                    label 'docker'
+                }
+            }
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     sh "mvn help:effective-settings"
