@@ -3,7 +3,7 @@
 pipeline {
     agent {
         node {
-            label 'maven3'
+            label 'docker'
         }
     }
     options {
@@ -35,11 +35,6 @@ pipeline {
             }
         }*/
         stage('Integration Tests') {
-            agent {
-                docker {
-                    image 'maven:3'
-                }
-            }
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     sh "mvn help:effective-settings"
