@@ -18,14 +18,28 @@ pipeline {
                 git url: 'https://github.com/voyages-sncf-technologies/hesperides.git', branch: params.BRANCH_NAME
             }
         }
-        stage('Build & test') {
+        stage('Build') {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     sh "mvn help:effective-settings"
                     sh 'mvn clean package -U -Dmaven.test.skip=true'
                 }
-                sh 'ls'
-                stash name: 'workspace', includes: '*'
+            }
+        }
+        stage('Tests') {
+            steps {
+                withMaven(mavenSettingsConfig: 'global_maven_settings') {
+                    sh "mvn help:effective-settings"
+                    sh 'mvn clean test'
+                }
+            }
+        }
+        stage('Integration Tests') {
+            steps {
+                withMaven(mavenSettingsConfig: 'global_maven_settings') {
+                    sh "mvn help:effective-settings"
+                    sh 'mvn -pl tests/integration verify -P integration-test'
+                }
             }
         }
         /*stage('Upload to Nexus') {
