@@ -3,7 +3,7 @@
 pipeline {
     agent {
         node {
-            label 'maven3'
+            label 'docker'
         }
     }
     options {
