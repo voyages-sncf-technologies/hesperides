@@ -10,7 +10,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     parameters {
-        string(name: 'BRANCH_NAME', defaultValue: 'feature/springboot', description: 'Github branch\'s name')
+        string(name: 'BRANCH_NAME', defaultValue: 'develop', description: 'Github branch\'s name')
     }
     stages {
         stage('Checkout') {
