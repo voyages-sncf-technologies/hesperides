@@ -1,5 +1,7 @@
 #!groovy
 
+@Library(["notifications"]) _
+
 pipeline {
     agent {
         node {
