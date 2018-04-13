@@ -1,6 +1,6 @@
 #!groovy
 
-@Library(["rundeck@2.1.5", "toolbox-yaml"]) _
+@Library(["rundeck@2.1.5", "toolbox-yaml", "notifications"]) _
 
 app = "HES"
 node {
