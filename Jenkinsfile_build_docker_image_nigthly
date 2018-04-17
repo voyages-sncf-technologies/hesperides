@@ -15,7 +15,7 @@ pipeline {
         cron('0 1 * * 1-5')
     }
     parameters {
-        string(name: 'DOCKER_TAG', defaultValue: 'feature_springboot', description: 'Docker tag\'s name')
+        string(name: 'DOCKER_TAG', defaultValue: 'develop', description: 'Docker tag\'s name')
     }
     stages {
         stage('Launch nigthly job') {
