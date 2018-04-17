@@ -26,6 +26,26 @@ pipeline {
     }
     post {
         always {
+            script {
+                if (currentBuild.currentResult == 'SUCCESS') {
+                    color = "green"
+                    icone_name = "ok"
+                } else {
+                    color = "red"
+                    icone_name = "ko"
+                }
+                sendMsgToHipchat(
+                        authToken: "4ktMQmKZMYbKYqBkuaCjdnnyEau6vj8k2A8Foq6t",
+                        roomNumber: "4191687",
+                        proxy: "http://proxy-lil:80",
+                        title: "${JOB_NAME}",
+                        message: "Job Status : ${currentBuild.currentResult}",
+                        url: "${BUILD_URL}",
+                        debug: false,
+                        color: "$color",
+                        iconName: "$icone_name"
+                )
+            }
             deleteDir()
         }
         changed {
