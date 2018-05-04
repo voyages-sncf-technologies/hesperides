@@ -20,6 +20,7 @@ pipeline {
                 script {
                     docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
                         sh "docker login --username admgit --password '7meJ%G\$2' docker-vsct.pkg.cloud.socrate.vsct.fr"
+                        sh "docker rmi hesperides/hesperides:${params.DOCKER_TAG}"
                         sh "docker build --no-cache --pull --build-arg http_proxy=http://proxy-hpr:80 --build-arg https_proxy=https://proxy-hpr:80 --build-arg CODE_VERSION=${params.DOCKER_TAG} ./docker -t hesperides/hesperides:${params.DOCKER_TAG}"
                         dockerImage = docker.image("hesperides/hesperides:${params.DOCKER_TAG}")
                         dockerImage.push()
