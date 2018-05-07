@@ -1,6 +1,6 @@
 #!groovy
 
-@Library("notifications") _
+@Library(["github", "notifications"]) _
 
 pipeline {
     agent {
@@ -15,13 +15,6 @@ pipeline {
         string(name: 'DOCKER_TAG', defaultValue: 'develop', description: 'Docker tag\'s name')
     }
     stages {
-        stage('Initialisation des Paramètres') {
-            steps {
-                script {
-                    github = load "${workspace}/github.groovy"
-                }
-            }
-        }
         stage('Create GitHub Release') {
             steps {
                 script {
