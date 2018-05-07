@@ -1,0 +1,36 @@
+#!groovy
+
+@Library("notifications") _
+
+pipeline {
+    agent {
+        node {
+            label 'default||master'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    parameters {
+        string(name: 'DOCKER_TAG', defaultValue: 'develop', description: 'Docker tag\'s name')
+    }
+    stages {
+        stage('Initialisation des Paramètres') {
+            steps {
+                script {
+                    github = load "${workspace}/github.groovy"
+                }
+            }
+        }
+        stage('Create GitHub Release') {
+            steps {
+                github.createRelease "v4", "develop", "v4", true, true
+            }
+        }
+    }
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}
