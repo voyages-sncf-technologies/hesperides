@@ -34,7 +34,7 @@ pipeline {
                     for (docker in dockersJson['result']) {
                         for (host in docker['HOSTS']) {
                             Map optionsRundeck = [
-                                    refresh_puppet_agent: "Complet",
+                                    refresh_puppet_agent: "complet",
                                     serveur             : [host['NAME'].toLowerCase()]
                             ]
                             devrundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
