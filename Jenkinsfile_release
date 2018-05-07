@@ -24,7 +24,9 @@ pipeline {
         }
         stage('Create GitHub Release') {
             steps {
-                github.createRelease "v4", "develop", "v4", true, true
+                script {
+                    github.createRelease "v4", "develop", "v4", true, true
+                }
             }
         }
     }
