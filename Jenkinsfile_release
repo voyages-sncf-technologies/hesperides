@@ -18,6 +18,7 @@ pipeline {
         stage('Create GitHub Release') {
             steps {
                 script {
+                    github.authenticate "8d9b9e9ed512efb4f486482d6776c448f22ebda5"
                     github.release "v4", "develop", "v4", true, true
                 }
             }
