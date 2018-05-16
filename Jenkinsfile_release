@@ -5,7 +5,7 @@
 pipeline {
     agent {
         node {
-            label 'default||master'
+            label 'maven3'
         }
     }
     options {
@@ -17,7 +17,7 @@ pipeline {
         string(name: 'GIT_BRANCH', defaultValue: 'release', description: 'Git Branch for Release')
     }
     stages {
-        stage("Perfom Release") {
+        stage("Clone Project") {
             steps {
                 script {
                     git(
@@ -25,8 +25,19 @@ pipeline {
                             credentialsId: 'github-hesperides-adm',
                             branch: "develop"
                     )
+                    sh 'ls'
                 }
             }
+        }
+        stage("Create release branch") {
+            steps {
+                script {
+                    sh "mvn gitflow:release-start"
+                }
+            }
+        }
+        stage("") {
+
         }
         /*stage('Create GitHub Release') {
             steps {
