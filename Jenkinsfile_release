@@ -32,7 +32,7 @@ pipeline {
         stage("Create release branch") {
             steps {
                 script {
-                    withMaven(mavenSettingsConfig: 'local_maven_settings') {
+                    withMaven(mavenSettingsConfig: 'global_maven_settings') {
                         sh "mvn help:effective-settings"
                         sh "mvn gitflow:release-start"
                     }
