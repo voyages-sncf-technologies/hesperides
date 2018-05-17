@@ -44,8 +44,10 @@ pipeline {
         stage('Create GitHub Release') {
             steps {
                 script {
-                    github.authenticate token: "8d9b9e9ed512efb4f486482d6776c448f22ebda5"
-                    github.release tag: "v${params.RELEASE_VERSION}", branch: "release/${params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: true
+                    withCredentials([string(credentialsId: 'github-hesperides-adm-token', variable: 'TOKEN_ID')]) {
+                        github.authenticate token: "${TOKEN_ID}"
+                        github.release tag: "v${params.RELEASE_VERSION}", branch: "release/${params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: false
+                    }
                 }
             }
         }
