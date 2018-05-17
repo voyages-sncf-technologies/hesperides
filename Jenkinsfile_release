@@ -35,8 +35,8 @@ pipeline {
                         sh "mvn help:effective-settings"
                         sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
                     }
-                    withCredentials([[$class: 'UsernamePasswordBinding', credentialsId: 'github-hesperides-adm', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
-                        sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@https://github.com/voyages-sncf-technologies/hesperides.git release/${params.RELEASE_VERSION}"
+                    withCredentials([usernamePassword(credentialsId: 'github-hesperides-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh "git push https://${USERNAME}:${PASSWORD}@github.com/voyages-sncf-technologies/hesperides.git release/${params.RELEASE_VERSION}"
                     }
                 }
             }
