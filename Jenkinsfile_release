@@ -36,20 +36,21 @@ pipeline {
                         sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
                     }
                     withCredentials([usernamePassword(credentialsId: 'github-hesperides-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh "git config user.name \"hesperides-adm\""
                         sh "git push https://${USERNAME}:${PASSWORD}@github.com/voyages-sncf-technologies/hesperides.git release/${params.RELEASE_VERSION}"
                     }
                 }
             }
         }
-    }
-    /*stage('Create GitHub Release') {
-        steps {
-            script {
-                github.authenticate token: "8d9b9e9ed512efb4f486482d6776c448f22ebda5"
-                github.release tag: "v4", branch: "develop", description: "v4", draft: false, prerelease: true
+        stage('Create GitHub Release') {
+            steps {
+                script {
+                    github.authenticate token: "8d9b9e9ed512efb4f486482d6776c448f22ebda5"
+                    github.release tag: "v${params.RELEASE_VERSION}", branch: "release/${params.params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: true
+                }
             }
         }
-    }*/
+    }
 
     post {
         always {
