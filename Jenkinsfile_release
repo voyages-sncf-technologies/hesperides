@@ -14,7 +14,6 @@ pipeline {
     parameters {
         string(name: 'RELEASE_VERSION', description: 'Release Version')
         string(name: 'NEXT_SNAPSHOT_VERSION', description: 'Next Snapshot Version')
-        string(name: 'GIT_BRANCH', defaultValue: 'release', description: 'Git Branch for Release')
     }
     stages {
         stage("Pull Project") {
@@ -46,7 +45,7 @@ pipeline {
             steps {
                 script {
                     github.authenticate token: "8d9b9e9ed512efb4f486482d6776c448f22ebda5"
-                    github.release tag: "v${params.RELEASE_VERSION}", branch: "release/${params.params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: true
+                    github.release tag: "v${params.RELEASE_VERSION}", branch: "release/${params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: true
                 }
             }
         }
