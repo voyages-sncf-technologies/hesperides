@@ -1,6 +1,6 @@
 #!groovy
 
-@Library(["notifications"]) _
+@Library(["github", "notifications"]) _
 
 pipeline {
     agent {
