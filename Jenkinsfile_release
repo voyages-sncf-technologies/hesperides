@@ -35,7 +35,7 @@ pipeline {
                         withMaven(mavenSettingsConfig: 'global_maven_settings') {
                             sh "mvn help:effective-settings"
                             sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
-                            sh "git push origin release/${params.RELEASE_VERSION}"
+                            sh "git push https://hesperides-adm:H3sp3r1d3s@github.com:voyages-sncf-technologies/hesperides.git release/${params.RELEASE_VERSION}"
                         }
                     }
                 }
