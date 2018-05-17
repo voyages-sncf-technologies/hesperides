@@ -33,7 +33,7 @@ pipeline {
                 script {
                     withMaven(mavenSettingsConfig: 'global_maven_settings') {
                         sh "mvn help:effective-settings"
-                        sh "mvn gitflow:release-start gitflow:release-finish"
+                        sh "mvn -B gitflow:release"
                     }
                 }
             }
