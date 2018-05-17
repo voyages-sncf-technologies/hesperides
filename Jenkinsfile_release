@@ -25,7 +25,6 @@ pipeline {
                             credentialsId: 'github-hesperides-adm',
                             branch: "develop"
                     )
-                    sh 'ls'
                 }
             }
         }
@@ -34,7 +33,7 @@ pipeline {
                 script {
                     withMaven(mavenSettingsConfig: 'global_maven_settings') {
                         sh "mvn help:effective-settings"
-                        sh "mvn gitflow:release"
+                        sh "mvn gitflow:release-start gitflow:release-finish"
                     }
                 }
             }
