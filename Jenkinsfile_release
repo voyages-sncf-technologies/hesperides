@@ -17,13 +17,12 @@ pipeline {
         string(name: 'GIT_BRANCH', defaultValue: 'release', description: 'Git Branch for Release')
     }
     stages {
-        stage("Clone Project") {
+        stage("Pull Project") {
             steps {
                 script {
                     git(
                             url: 'https://github.com/voyages-sncf-technologies/hesperides.git',
-                            credentialsId: 'github-hesperides-adm',
-                            branch: "develop"
+                            credentialsId: 'github-hesperides-adm'
                     )
                 }
             }
@@ -33,7 +32,9 @@ pipeline {
                 script {
                     withMaven(mavenSettingsConfig: 'global_maven_settings') {
                         sh "mvn help:effective-settings"
-                        sh "mvn -B gitflow:release-start"
+                        sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
+                        sh "git checkout release/${params.RELEASE_VERSION}"
+                        sh "git push origin ${params.RELEASE_VERSION}"
                     }
                 }
             }
