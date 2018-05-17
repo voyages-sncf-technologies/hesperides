@@ -31,29 +31,29 @@ pipeline {
         stage("Create release branch") {
             steps {
                 script {
+                    withMaven(mavenSettingsConfig: 'global_maven_settings') {
+                        sh "mvn help:effective-settings"
+                        sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
+                    }
                     withCredentials([[$class: 'UsernamePasswordBinding', credentialsId: 'github-hesperides-adm', variable: 'github-hesperides-adm']]) {
-                        withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                            sh "mvn help:effective-settings"
-                            sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
-                            sh "git push hesperides-adm:H3sp3r1d3s@github.com:voyages-sncf-technologies/hesperides.git release/${params.RELEASE_VERSION}"
-                        }
+                        sh "git push origin release/${params.RELEASE_VERSION}"
                     }
                 }
             }
         }
-        /*stage('Create GitHub Release') {
-            steps {
-                script {
-                    github.authenticate token: "8d9b9e9ed512efb4f486482d6776c448f22ebda5"
-                    github.release tag: "v4", branch: "develop", description: "v4", draft: false, prerelease: true
-                }
-            }
-        }*/
-
     }
-    post {
-        always {
-            deleteDir()
+    /*stage('Create GitHub Release') {
+        steps {
+            script {
+                github.authenticate token: "8d9b9e9ed512efb4f486482d6776c448f22ebda5"
+                github.release tag: "v4", branch: "develop", description: "v4", draft: false, prerelease: true
+            }
         }
+    }*/
+
+}
+post {
+    always {
+        deleteDir()
     }
 }
