@@ -31,10 +31,12 @@ pipeline {
         stage("Create release branch") {
             steps {
                 script {
-                    withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                        sh "mvn help:effective-settings"
-                        sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
-                        sh "git push origin release/${params.RELEASE_VERSION}"
+                    withCredentials([[$class: 'UsernamePasswordBinding', credentialsId: 'github-hesperides-adm', variable: 'github-hesperides-adm']]) {
+                        withMaven(mavenSettingsConfig: 'global_maven_settings') {
+                            sh "mvn help:effective-settings"
+                            sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
+                            sh "git push origin release/${params.RELEASE_VERSION}"
+                        }
                     }
                 }
             }
