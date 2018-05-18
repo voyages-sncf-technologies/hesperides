@@ -16,7 +16,7 @@ pipeline {
         string(name: 'NEXT_SNAPSHOT_VERSION', description: 'Next Snapshot Version')
     }
     stages {
-        /*stage("Pull Project") {
+        stage("Pull Project") {
             steps {
                 script {
                     git(
@@ -40,15 +40,15 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
         stage('Create GitHub Release') {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'github-hesperides-adm-token', variable: 'TOKEN_ID')]) {
                         github.authenticate organization: 'voyages-sncf-technologies', project: 'hesperides', token: "${TOKEN_ID}"
-//                        github.createRelease tag: "v${params.RELEASE_VERSION}", branch: "release/${params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: false
-//                        github.createPullRequest title: 'Release Hesperides v${params.RELEASE_VERSION}', head: "release/${params.RELEASE_VERSION}", base: "develop", body: ""
-//                        github.createPullRequest title: 'Release Hesperides v${params.RELEASE_VERSION}', head: "release/${params.RELEASE_VERSION}", base: "master", body: ""
+                        github.createRelease tag: "v${params.RELEASE_VERSION}", branch: "release/${params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: false
+                        github.createPullRequest title: 'Release Hesperides v${params.RELEASE_VERSION}', head: "release/${params.RELEASE_VERSION}", base: "develop", body: ""
+                        github.createPullRequest title: 'Release Hesperides v${params.RELEASE_VERSION}', head: "release/${params.RELEASE_VERSION}", base: "master", body: ""
                     }
                 }
             }
