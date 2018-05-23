@@ -5,10 +5,8 @@ COPY certificates/trustore /etc/ssl/certs/java/
 
 ENTRYPOINT ["/usr/bin/java"]
 
-USER dckadm
-
 RUN touch /var/log/hesperides.log
-RUN chmod u+w /var/log/hesperides.log
+RUN chmod 777 -R /var/log
 
 CMD ["-Djavax.net.ssl.trustStore=/etc/ssl/certs/java/trustore", "-jar","/hesperides.jar"]
 
