@@ -5,6 +5,8 @@ COPY certificates/trustore /etc/ssl/certs/java/
 
 ENTRYPOINT ["/usr/bin/java"]
 
+USER dckadm
+
 RUN touch /var/log/hesperides.log
 RUN chmod u+w /var/log/hesperides.log
 
