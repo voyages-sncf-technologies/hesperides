@@ -26,12 +26,17 @@ pipeline {
                 script {
                     docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
                         sh "docker login --username admgit --password '7meJ%G\$2' docker-vsct.pkg.cloud.socrate.vsct.fr"
-                        sh "docker build --force-rm --no-cache --pull --build-arg http_proxy=http://proxy-hpr:80 --build-arg https_proxy=https://proxy-hpr:80 --build-arg CODE_VERSION=${params.DOCKER_TAG} . -t hesperides/teeproxy:master"
+                        sh "docker build --force-rm --no-cache --pull --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} . -t hesperides/teeproxy:master"
                         dockerImage = docker.image("hesperides/teeproxy:master")
                         dockerImage.push()
                     }
                 }
             }
+        }
+    }
+    post {
+        always {
+            deleteDir()
         }
     }
 }
