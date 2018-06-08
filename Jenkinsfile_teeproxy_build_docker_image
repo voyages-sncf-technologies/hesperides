@@ -1,0 +1,37 @@
+#!groovy
+
+pipeline {
+    agent {
+        node {
+            label 'docker'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    stages {
+        stage("Pull Project") {
+            steps {
+                script {
+                    git(
+                            url: 'git@gitlab.socrate.vsct.fr:hesperides/teeproxy.git',
+                            credentialsId: 'jgit',
+                            branch: 'master'
+                    )
+                }
+            }
+        }
+        stage('Build docker image') {
+            steps {
+                script {
+                    docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
+                        sh "docker login --username admgit --password '7meJ%G\$2' docker-vsct.pkg.cloud.socrate.vsct.fr"
+                        sh "docker build --force-rm --no-cache --pull --build-arg http_proxy=http://proxy-hpr:80 --build-arg https_proxy=https://proxy-hpr:80 --build-arg CODE_VERSION=${params.DOCKER_TAG} . -t hesperides/teeproxy:master"
+                        dockerImage = docker.image("hesperides/teeproxy:master")
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+    }
+}
