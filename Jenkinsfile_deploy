@@ -1,6 +1,6 @@
 #!groovy
 
-@Library(["rundeck@2.1.5", "toolbox-yaml", "notifications"]) _
+@Library(["rundeck", "toolbox-yaml", "notifications"]) _
 
 app = "HES"
 node {
@@ -23,7 +23,13 @@ pipeline {
             steps {
                 script {
                     // Set params as they will be used later
-                    dockers = horsprodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER")
+                    if (${params.PLATFORM} =~ "PRD") {
+                        dockers = prodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER")
+                        rundeckplatform = rundeck
+                    } else {
+                        dockers = horsprodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER")
+                        rundeckplatform = pprundeck
+                    }
                     dockersJson = readJSON text: "${dockers}"
                 }
             }
@@ -37,10 +43,9 @@ pipeline {
                                     refresh_puppet_agent: "complet",
                                     serveur             : [host['NAME'].toLowerCase()]
                             ]
-                            devrundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
+                            rundeckplatform.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
                         }
                     }
-
                 }
             }
         }
@@ -61,7 +66,7 @@ pipeline {
 
 
                                 ]
-                                devrundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
+                                rundeckplatform.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
                             }
                         }
                     }
