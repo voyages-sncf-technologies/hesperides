@@ -4,7 +4,7 @@
 
 app = "HES"
 node {
-    platformsList = String.join("\n", toolbox.getEnvironments(app))
+    platformsList = (horsprodtoolbox.getEnvironments(app) + prodtoolbox.getEnvironments(app)).join('\n')
 }
 pipeline {
     agent {
