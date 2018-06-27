@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     // Set params as they will be used later
-                    if (${params.PLATFORM} =~ "PRD") {
+                    if (params.PLATFORM =~ "PRD") {
                         dockers = prodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER")
                         rundeckplatform = rundeck
                     } else {
