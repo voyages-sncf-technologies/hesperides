@@ -1,0 +1,90 @@
+#!groovy
+
+@Library(["rundeck", "toolbox-yaml", "notifications"]) _
+
+app = "HES"
+node {
+    platformsList = prodtoolbox.getEnvironments(app).join('\n')
+}
+pipeline {
+    agent {
+        node {
+            label 'default||master'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    parameters {
+        choice(choices: platformsList, name: "PLATFORM", description: "OBLIGATOIRE : Plateforme sur laquelle sera fait le déploiement")
+    }
+    stages {
+        stage('Initialisation des Paramètres') {
+            steps {
+                script {
+                    // Set params as they will be used later
+                    dockers = prodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER")
+                    dockersJson = readJSON text: "${dockers}"
+
+                    // Set user & mail variables
+                    wrap([$class: 'BuildUser']) {
+                        user = env.BUILD_USER_ID
+                        if (user == null) {
+                            user = "jenkins"
+                        }
+                    }
+                    rundeck.setRundeckUser(user)
+                    // Set up Rundeck token stored into JKS credentials
+                    withCredentials([usernamePassword(credentialsId: 'rundeck', usernameVariable: 'USERNAME', passwordVariable: 'TOKEN')]) {
+                        rundeck.setRundeckToken(TOKEN)
+                    }
+
+                }
+            }
+        }
+        stage('Deploy docker image') {
+            steps {
+                script {
+                    for (docker in dockersJson['result']) {
+                        for (host in docker['HOSTS']) {
+                            Map optionsRundeck = [
+                                    refresh_puppet_agent: "complet",
+                                    serveur             : [host['NAME'].toLowerCase()]
+                            ]
+                            rundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
+                        }
+                    }
+                }
+            }
+        }
+        stage('Restart docker image') {
+            steps {
+                script {
+                    for (docker in dockersJson['result']) {
+                        for (host in docker['HOSTS']) {
+                            for (instance in host['INSTANCES']) {
+                                Map optionsRundeck = [
+                                        composant  : "DOCKER-${docker["IMAGE"]}",
+                                        instances  : instance['NAME'],
+                                        trigramme  : app,
+                                        techno     : "DOCKER",
+                                        TargetNodes: "${app}${params.PLATFORM}DOCKER${docker["IMAGE"]}-${host['NAME']}",
+                                        plateforme : platform,
+                                        serveur    : host['NAME'].toLowerCase(),
+
+
+                                ]
+                                rundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}
