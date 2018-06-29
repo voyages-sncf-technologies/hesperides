@@ -35,7 +35,7 @@ pipeline {
                     }
                     rundeck.setRundeckUser(user)
                     // Set up Rundeck token stored into JKS credentials
-                    withCredentials([usernamePassword(credentialsId: 'rundeck', usernameVariable: 'USERNAME', passwordVariable: 'TOKEN')]) {
+                    withCredentials([usernamePassword(credentialsId: 'rundeck', variable: 'TOKEN')]) {
                         rundeck.setRundeckToken(TOKEN)
                     }
 
