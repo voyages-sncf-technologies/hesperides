@@ -32,14 +32,18 @@ pipeline {
                     }
                     dockersJson = readJSON text: "${dockers}"
 
-                    // Set user & mail variables
+                    // Set user
                     wrap([$class: 'BuildUser']) {
                         user = env.BUILD_USER_ID
                         if (user == null) {
                             user = "jenkins"
                         }
                     }
-                    rundeckPlatform.setRundeckUser(user)
+                    rundeck.setRundeckUser(user)
+                    // Set up Rundeck token
+                    withCredentials([string(credentialsId: 'pprundeck', variable: 'TOKEN')]) {
+                        rundeck.setRundeckToken(TOKEN)
+                    }
                 }
             }
         }

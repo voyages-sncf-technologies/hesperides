@@ -26,7 +26,7 @@ pipeline {
                     dockers = prodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER")
                     dockersJson = readJSON text: "${dockers}"
 
-                    // Set user & mail variables
+                    // Set user
                     wrap([$class: 'BuildUser']) {
                         user = env.BUILD_USER_ID
                         if (user == null) {
@@ -34,11 +34,10 @@ pipeline {
                         }
                     }
                     rundeck.setRundeckUser(user)
-                    // Set up Rundeck token stored into JKS credentials
+                    // Set up Rundeck token
                     withCredentials([string(credentialsId: 'rundeck', variable: 'TOKEN')]) {
                         rundeck.setRundeckToken(TOKEN)
                     }
-
                 }
             }
         }
