@@ -3,7 +3,7 @@
 @Library(["rundeck", "toolbox-yaml"]) _
 
 app = "HES"
-node {
+node('prod') {
     platformsList = prodtoolbox.getEnvironments(app).join('\n')
 }
 pipeline {
@@ -83,6 +83,7 @@ pipeline {
     }
     post {
         always {
+            wrap([$class: 'MesosSingleUseSlave']) {}
             deleteDir()
         }
     }
