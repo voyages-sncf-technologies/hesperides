@@ -9,7 +9,7 @@ node {
 pipeline {
     agent {
         node {
-            label 'default||master'
+            label 'prod'
         }
     }
     options {
