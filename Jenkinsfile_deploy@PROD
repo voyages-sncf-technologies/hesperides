@@ -1,6 +1,6 @@
 #!groovy
 
-@Library(["rundeck", "toolbox-yaml", "notifications"]) _
+@Library(["rundeck", "toolbox-yaml"]) _
 
 app = "HES"
 node {
@@ -35,7 +35,7 @@ pipeline {
                     }
                     rundeck.setRundeckUser(user)
                     // Set up Rundeck token stored into JKS credentials
-                    withCredentials([usernamePassword(credentialsId: 'rundeck', variable: 'TOKEN')]) {
+                    withCredentials([string(credentialsId: 'rundeck', variable: 'TOKEN')]) {
                         rundeck.setRundeckToken(TOKEN)
                     }
 

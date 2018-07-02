@@ -1,10 +1,10 @@
 #!groovy
 
-@Library(["rundeck", "toolbox-yaml", "notifications"]) _
+@Library(["rundeck", "toolbox-yaml"]) _
 
 app = "HES"
 node {
-    platformsList = (horsprodtoolbox.getEnvironments(app) + prodtoolbox.getEnvironments(app)).join('\n')
+    platformsList = horsprodtoolbox.getEnvironments(app).join('\n')
 }
 pipeline {
     agent {
