@@ -1,5 +1,5 @@
-ARG  CODE_VERSION
-FROM hesperides/hesperides:${CODE_VERSION}
+ARG  DOCKER_TAG
+FROM hesperides/hesperides:${DOCKER_TAG}
 
 COPY certificates/trustore /etc/ssl/certs/java/
 
