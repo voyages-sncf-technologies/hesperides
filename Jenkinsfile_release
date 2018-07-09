@@ -32,7 +32,7 @@ pipeline {
                 script {
                     withMaven(mavenSettingsConfig: 'global_maven_settings') {
                         sh "mvn help:effective-settings"
-                        sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
+                        sh "mvn -B gitflow:release -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
                     }
                     withCredentials([usernamePassword(credentialsId: 'github-hesperides-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "git config user.name \"hesperides-adm\""

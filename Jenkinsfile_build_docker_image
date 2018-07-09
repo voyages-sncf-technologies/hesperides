@@ -2,6 +2,13 @@
 
 @Library(["notifications"]) _
 
+/**
+ * Pipeline de création de l'image Docker pour VSCT :
+ * Récupère l'image Docker du Dockerhub pour la surcharger
+ * avec le certificat de l'Active Directory,
+ * et la pusher vers le dépôt VSCT (Artifactory).
+ */
+
 pipeline {
     agent {
         node {
