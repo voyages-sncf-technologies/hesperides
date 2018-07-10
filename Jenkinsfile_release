@@ -55,9 +55,10 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github-hesperides-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh "git checkout develop"
                         sh "git merge release/${params.RELEASE_VERSION}"
                         sh "git config user.name \"hesperides-adm\""
-                        sh "git push https://${USERNAME}:${PASSWORD}@github.com/voyages-sncf-technologies/hesperides.git develop"
+                        sh "git push https://${USERNAME}:${PASSWORD}@github.com/voyages-sncf-technologies/hesperides.git"
                     }
                 }
             }
