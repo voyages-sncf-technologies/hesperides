@@ -13,7 +13,6 @@ pipeline {
     }
     parameters {
         string(name: 'RELEASE_VERSION', description: 'Release Version')
-        string(name: 'NEXT_SNAPSHOT_VERSION', description: 'Next Snapshot Version')
     }
     stages {
         stage("Pull Project") {
@@ -32,7 +31,7 @@ pipeline {
                 script {
                     withMaven(mavenSettingsConfig: 'global_maven_settings') {
                         sh "mvn help:effective-settings"
-                        sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION} -DdevelopmentVersion=${params.NEXT_SNAPSHOT_VERSION}"
+                        sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION}"
                     }
                     withCredentials([usernamePassword(credentialsId: 'github-hesperides-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "git config user.name \"hesperides-adm\""
@@ -41,7 +40,7 @@ pipeline {
                 }
             }
         }
-        stage('Create GitHub Release') {
+        stage('Create tag') {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'github-hesperides-adm-token', variable: 'TOKEN_ID')]) {
@@ -51,13 +50,16 @@ pipeline {
                 }
             }
         }
-        stage('Merge and push Release GitHub Release') {
+        stage('Merge and push release on develop and master') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github-hesperides-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh "git config user.name \"hesperides-adm\""
                         sh "git checkout develop"
                         sh "git merge release/${params.RELEASE_VERSION}"
-                        sh "git config user.name \"hesperides-adm\""
+                        sh "git push https://${USERNAME}:${PASSWORD}@github.com/voyages-sncf-technologies/hesperides.git"
+                        sh "git checkout master"
+                        sh "git merge release/${params.RELEASE_VERSION}"
                         sh "git push https://${USERNAME}:${PASSWORD}@github.com/voyages-sncf-technologies/hesperides.git"
                     }
                 }
