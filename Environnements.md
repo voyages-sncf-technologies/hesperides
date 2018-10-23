@@ -3,6 +3,11 @@
 - Product board : https://wiki.vsct.fr/display/KTN/Product+Board+HESPERIDES
  
 ## Plateformes
+Exemple d'accès en SSH depuis un terminal, avec `$USER` votre login Windows, via bastion :
+
+    $ ssh -A -l adminapptest@chiwawa+SSH+$USER wallix
+    adminapptest@chiwawa $ ssh ciaobaby-bck
+
 ### DEV
 - VM : `ciaobaby` ([puppet-configuration-horsprod/config/enc/PUPPEA/_DOCKER_ENGINE/DMZ_ASSEMBLAGE/ciaobaby.socrate.vsct.fr.yml](https://gitlab.socrate.vsct.fr/dtaas/puppet-configuration-horsprod/tree/master/config/enc/PUPPEA/_DOCKER_ENGINE/DMZ_ASSEMBLAGE))
 - YAML : [yaml_hors_prod/HES-REL1.yaml](https://gitlab.socrate.vsct.fr/toolboxyaml/yaml_hors_prod/blob/master/HES-REL1.yaml)
