@@ -4,10 +4,6 @@
 
 **Continous Delivery** ==> manual deployment
 
-## Continuous Integration (CI)
-
-## Continuous Deployment (CD)
-
 ## Tips
 
 Tester une image docker pushée dans le registry privé vsct :
