@@ -23,3 +23,11 @@ Exemple d'accès en SSH depuis un terminal, avec `$USER` votre login Windows, vi
 ## HAPs
 - hors prod (REL1 et INT1) : [haproxy-configuration-horsprod/HES/hapHESREL1.conf](https://gitlab.socrate.vsct.fr/dt/haproxy-configuration-horsprod/blob/master/HES/hapHESREL1.conf)
 - prod : [haproxy-configuration-prod/USL/hapUSLPRD1-DMZTECH.conf](https://gitlab.socrate.vsct.fr/dt/haproxy-configuration-prod/blob/master/USL/hapUSLPRD1-DMZTECH.conf)
+
+## Log files
+Les logs sont archivés dans `/appl/syslogng/logs` sur les VMs.
+Aucune rotation n'est pour le moment en place.
+
+Fichiers de configuration:
+- [syslog_ciaobaby.conf](https://gitlab.socrate.vsct.fr/dt/syslogng-configuration-horsprod/blob/master/syslog_ciaobaby.conf)
+- [syslog_dare.conf](https://gitlab.socrate.vsct.fr/dt/syslogng-configuration-horsprod/blob/master/syslog_dare.conf)
