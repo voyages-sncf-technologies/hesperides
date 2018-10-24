@@ -14,9 +14,9 @@ pipeline {
             steps {
                 script {
                     git(
-                            url: 'git@gitlab.socrate.vsct.fr:hesperides/teeproxy.git',
-                            credentialsId: 'jgit',
-                            branch: 'master'
+                        url: 'git@gitlab.socrate.vsct.fr:hesperides/teeproxy.git',
+                        credentialsId: 'jgit',
+                        branch: 'master'
                     )
                 }
             }
@@ -27,7 +27,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'artifactory-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
                             sh "docker login --username ${USERNAME} --password '${PASSWORD}' docker-vsct.pkg.cloud.socrate.vsct.fr"
-                            sh "docker build --force-rm --no-cache --pull --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} . -t hesperides/teeproxy:master"
+                            sh "docker build --force-rm --no-cache --pull --build-arg GIT_COMMIT=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} . -t hesperides/teeproxy:master"
                             dockerImage = docker.image("hesperides/teeproxy:master")
                             dockerImage.push()
                         }
