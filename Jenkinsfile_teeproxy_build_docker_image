@@ -10,6 +10,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     parameters {
+        string(name: 'GIT_REF', defaultValue: 'master', description: 'git ref identifying source code version')
         string(name: 'DOCKER_TAG', defaultValue: 'master', description: 'Docker tag\'s name')
     }
     stages {
@@ -18,7 +19,7 @@ pipeline {
                 script {
                     git(url: 'git@gitlab.socrate.vsct.fr:hesperides/teeproxy.git',
                         credentialsId: 'jgit',
-                        branch: params.DOCKER_TAG)
+                        branch: params.GIT_REF)
                 }
             }
         }
