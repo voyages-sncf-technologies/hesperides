@@ -13,10 +13,8 @@ pipeline {
         stage("Pull Project") {
             steps {
                 script {
-                    git(
-                            url: 'https://github.com/voyages-sncf-technologies/hesperides-data-migration.git',
-                            branch: 'master'
-                    )
+                    git(url: 'https://github.com/voyages-sncf-technologies/hesperides-data-migration.git',
+                        branch: 'master')
                 }
             }
         }

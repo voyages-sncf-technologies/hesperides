@@ -18,11 +18,9 @@ pipeline {
         stage("Pull Project") {
             steps {
                 script {
-                    git(
-                            url: 'https://github.com/voyages-sncf-technologies/hesperides.git',
-                            credentialsId: 'github-hesperides-adm',
-                            branch: 'develop'
-                    )
+                    git(url: 'https://github.com/voyages-sncf-technologies/hesperides.git',
+                        credentialsId: 'github-hesperides-adm',
+                        branch: 'develop')
                 }
             }
         }

@@ -13,11 +13,9 @@ pipeline {
         stage("Pull Project") {
             steps {
                 script {
-                    git(
-                        url: 'git@gitlab.socrate.vsct.fr:hesperides/teeproxy.git',
+                    git(url: 'git@gitlab.socrate.vsct.fr:hesperides/teeproxy.git',
                         credentialsId: 'jgit',
-                        branch: 'master'
-                    )
+                        branch: 'master')
                 }
             }
         }
