@@ -28,7 +28,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'artifactory-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
                             sh "docker login --username ${USERNAME} --password '${PASSWORD}' docker-vsct.pkg.cloud.socrate.vsct.fr"
-                            sh "docker build --force-rm --no-cache --pull --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG} ./docker -t hesperides/hesperides:${params.DOCKER_TAG}"
+                            sh "docker build --force-rm --no-cache --pull --label git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG} ./docker -t hesperides/hesperides:${params.DOCKER_TAG}"
                             dockerImage = docker.image("hesperides/hesperides:${params.DOCKER_TAG}")
                             dockerImage.push()
                         }

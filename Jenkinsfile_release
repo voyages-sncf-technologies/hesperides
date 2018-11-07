@@ -63,6 +63,21 @@ pipeline {
                 }
             }
         }
+        stage('Trigger teeproxy image generation for this release') {
+            steps {
+                build job: "Jenkinsfile_teeproxy_build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: params.RELEASE_VERSION]]
+            }
+        }
+        stage('Trigger hesperides-data-migration image generation for this release') {
+            steps {
+                build job: "Jenkinsfile_datamigration_build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: params.RELEASE_VERSION]]
+            }
+        }
+        stage('Trigger hesperides image generation for this release') {
+            steps {
+                build job: "Jenkinsfile_build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: params.RELEASE_VERSION]]
+            }
+        }
     }
 
     post {

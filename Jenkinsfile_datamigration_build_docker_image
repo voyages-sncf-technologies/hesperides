@@ -9,12 +9,15 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
+    parameters {
+        string(name: 'DOCKER_TAG', defaultValue: 'master', description: 'Docker tag\'s name')
+    }
     stages {
         stage("Pull Project") {
             steps {
                 script {
                     git(url: 'https://github.com/voyages-sncf-technologies/hesperides-data-migration.git',
-                        branch: 'master')
+                        branch: params.DOCKER_TAG)
                 }
             }
         }
@@ -28,8 +31,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'artifactory-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
                             sh "docker login --username ${USERNAME} --password '${PASSWORD}' docker-vsct.pkg.cloud.socrate.vsct.fr"
-                            sh "docker build --force-rm --no-cache --pull --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} . -t hesperides/hesperides-data-migration:master"
-                            dockerImage = docker.image("hesperides/hesperides-data-migration:master")
+                            sh "docker build --force-rm --no-cache --pull --label git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} . -t hesperides/hesperides-data-migration:master"
+                            dockerImage = docker.image("hesperides/hesperides-data-migration:${params.DOCKER_TAG}")
                             dockerImage.push()
                         }
                     }

@@ -9,13 +9,16 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
+    parameters {
+        string(name: 'DOCKER_TAG', defaultValue: 'master', description: 'Docker tag\'s name')
+    }
     stages {
         stage("Pull Project") {
             steps {
                 script {
                     git(url: 'git@gitlab.socrate.vsct.fr:hesperides/teeproxy.git',
                         credentialsId: 'jgit',
-                        branch: 'master')
+                        branch: params.DOCKER_TAG)
                 }
             }
         }
@@ -25,8 +28,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'artifactory-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
                             sh "docker login --username ${USERNAME} --password '${PASSWORD}' docker-vsct.pkg.cloud.socrate.vsct.fr"
-                            sh "docker build --force-rm --no-cache --pull --build-arg GIT_COMMIT=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} . -t hesperides/teeproxy:master"
-                            dockerImage = docker.image("hesperides/teeproxy:master")
+                            sh "docker build --force-rm --no-cache --pull --label git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} . -t hesperides/teeproxy:master"
+                            dockerImage = docker.image("hesperides/teeproxy:${params.DOCKER_TAG}")
                             dockerImage.push()
                         }
                     }
