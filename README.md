@@ -39,10 +39,10 @@ construit l'image depuis le repo Gitlab, et la pushe vers Artifactory.
   * exécute [le job pprundeck HES/Outils/RESTART](https://pprundeck.socrate.vsct.fr/rundeck/project/HES/job/show/c9f92ce5-2d20-4a57-9cb8-8e88aae5412f) qui effectue un `./SHUT && ./BOOT`
 
 - `Jenkinsfile_deploy_nightly_dev` ([job jenkins](https://master.jenkins.cloud.socrate.vsct.fr/job/A_HESPERIDES/job/continuous-delivery/job/deploy_nightly_dev/)):
-déclenche le job précédente sur `REL1` toutes les nuits
+déclenche le job `Jenkinsfile_deploy` sur `REL1` toutes les nuits
 
 - `Jenkinsfile_deploy_nightly_int` ([job jenkins](https://master.jenkins.cloud.socrate.vsct.fr/job/A_HESPERIDES/job/continuous-delivery/job/deploy_nightly_int/)):
-déclenche le job précédente sur `INT1` toutes les nuits
+déclenche le job `Jenkinsfile_deploy` sur `INT1` toutes les nuits
 
 - `Jenkinsfile_deploy@PROD` ([job jenkins](https://master.jenkins.cloud.socrate.vsct.fr/job/A_HESPERIDES@PROD/job/deploy/)):
 identique à `Jenkinsfile_deploy` mais sur `PRD1`

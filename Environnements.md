@@ -13,14 +13,14 @@ Exemple d'accès en SSH depuis un terminal, avec `$USER` votre login Windows, vi
 - YAML : [yaml_hors_prod/HES-REL1.yaml](https://gitlab.socrate.vsct.fr/toolboxyaml/yaml_hors_prod/blob/master/HES-REL1.yaml)
 - liste des endpoints grâce à `spring-boot-starter-actuator`: <http://ciaobaby:52700/rest/mappings>
 - [Swagger](http://ciaobaby:52700/rest/swagger-ui.html)
-- **TODO** lien vers [Centreon (central-horsprod)]()
+- [Centreon (central-horsprod)](https://central-horsprod.socrate.vsct.fr/centreon/main.php?p=20202&o=hd&host_name=ciaobaby)
  
 ### INT
 - VM : `dare` ([puppetexplorer](http://puppetexplorer-horsprod.socrate.vsct.fr/#/node/dare.socrate.vsct.fr) - [puppet-configuration-horsprod/config/enc/PUPPET/INTEGRATION/HES/dare.socrate.vsct.fr.yml](https://gitlab.socrate.vsct.fr/dtaas/puppet-configuration-horsprod/blob/master/config/enc/PUPPET/INTEGRATION/HES/dare.socrate.vsct.fr.yml))
 - YAML : [yaml_hors_prod/HES-INT1.yaml](https://gitlab.socrate.vsct.fr/toolboxyaml/yaml_hors_prod/blob/master/HES-INT1.yaml)
 - liste des endpoints grâce à `spring-boot-starter-actuator`: <http://dare:52700/rest/mappings>
 - [Swagger](http://dare:52700/rest/swagger-ui.html)
-- **TODO** lien vers [Centreon (central-horsprod)]()
+- [Centreon (central-horsprod)](https://central-horsprod.socrate.vsct.fr/centreon/main.php?p=20202&o=hd&host_name=dare)
 
 ### PROD
 - VM : `bogogno` ([puppetexplorer](http://puppetexplorer-prod.socrate.vsct.fr/#/node/bogogno.socrate.vsct.fr) - [puppet-configuration-prod/config/enc/USINE_LOGICIELLE/HESPERIDES/bogogno.socrate.vsct.fr.yml](https://gitlab.socrate.vsct.fr/dtaas/puppet-configuration-prod/tree/master/config/enc/USINE_LOGICIELLE/HESPERIDES))
