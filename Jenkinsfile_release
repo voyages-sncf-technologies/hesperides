@@ -15,6 +15,14 @@ pipeline {
         string(name: 'RELEASE_VERSION', description: 'Release Version')
     }
     stages {
+        stage('Validate parameters') {
+            when {
+                expression { params.RELEASE_VERSION.startsWith('v') }
+            }
+            steps {
+                error("RELEASE_VERSION must not start with a v !")
+            }
+        }
         stage("Pull Project") {
             steps {
                 script {
