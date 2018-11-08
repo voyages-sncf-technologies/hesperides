@@ -73,17 +73,17 @@ pipeline {
         }
         stage('Trigger teeproxy image generation for this release') {
             steps {
-                build job: "../teeproxy/build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: params.RELEASE_VERSION]]
+                build job: "../teeproxy/build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: "v${params.RELEASE_VERSION}"]]
             }
         }
         stage('Trigger hesperides-data-migration image generation for this release') {
             steps {
-                build job: "../data-migration/build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: params.RELEASE_VERSION]]
+                build job: "../data-migration/build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: "v${params.RELEASE_VERSION}"]]
             }
         }
         stage('Trigger hesperides image generation for this release') {
             steps {
-                build job: "build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: params.RELEASE_VERSION]]
+                build job: "build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: "v${params.RELEASE_VERSION}"]]
             }
         }
     }
