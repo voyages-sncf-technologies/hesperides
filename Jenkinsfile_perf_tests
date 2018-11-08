@@ -1,0 +1,40 @@
+#!groovy
+
+@Library(["toolbox-yaml"]) _
+
+node {
+    platformsList = horsprodtoolbox.getEnvironments('HES').join('\n')
+}
+pipeline {
+    agent {
+        node {
+            label 'maven3'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    parameters {
+        string(name: 'AUTH', description: 'user:password', defaultValue: 'tech:password')
+        choice(name: "PLATFORM", choices: platformsList, description: 'Plateforme sur laquelle sera fait le test de charge')
+    }
+    stages {
+        stage('Pull Project') {
+            steps {
+                script {
+                    git(url: 'https://github.com/voyages-sncf-technologies/hesperides.git',
+                        branch: 'develop')
+                    platformContainers = readJSON(text: horsprodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER"))  // http://toolbox-server.socrate.vsct.fr/horsprod/api/toolbox?function=ypath&args=/HES/REL1/DOCKER
+                    host = platformContainers.find { it.IMAGE.contains('/hesperides:') }.HOSTS[0]
+                    instance = host.INSTANCES[0]
+                    hostPort = "${host.NAME}:${instance.PORTS[0].split(':')[0]}"
+                    echo hostPort
+                }
+            }
+        }
+
+        stage('Execute Gatling') {
+            sh "mvn -f perfs/pom.xml gatling:execute -Pgatling -Dgatling.simulationClass=HesperidesApi -DbaseUrl=http://${hostPort}/rest -Dauth=${AUTH} -DusersPerSecond=20 -Dduration=60seconds"
+        }
+    }
+}

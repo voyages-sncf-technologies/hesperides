@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     // Set params as they will be used later
-                    dockers = horsprodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER")
+                    dockers = horsprodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER")  // http://toolbox-server.socrate.vsct.fr/horsprod/api/toolbox?function=ypath&args=/HES/REL1/DOCKER
                     dockersJson = readJSON text: "${dockers}"
 
                     // Set user

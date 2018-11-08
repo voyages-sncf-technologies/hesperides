@@ -40,3 +40,4 @@ Aucune rotation n'est pour le moment en place.
 Fichiers de configuration:
 - [syslog_ciaobaby.conf](https://gitlab.socrate.vsct.fr/dt/syslogng-configuration-horsprod/blob/master/syslog_ciaobaby.conf)
 - [syslog_dare.conf](https://gitlab.socrate.vsct.fr/dt/syslogng-configuration-horsprod/blob/master/syslog_dare.conf)
+- [syslog_bogogno.conf](https://gitlab.socrate.vsct.fr/dt/syslogng-configuration-prod/blob/master/syslog_bogogno.conf)
