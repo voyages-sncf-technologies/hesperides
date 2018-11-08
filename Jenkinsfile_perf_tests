@@ -26,9 +26,7 @@ pipeline {
                         branch: 'develop')
                     platformContainers = readJSON(text: horsprodtoolbox.yPath("/HES/${params.PLATFORM}/DOCKER").toString()).result  // http://toolbox-server.socrate.vsct.fr/horsprod/api/toolbox?function=ypath&args=/HES/REL1/DOCKER
                     host = platformContainers.find { it.IMAGE.contains('/hesperides:') }.HOSTS[0]
-                    instance = host.INSTANCES[0]
-                    hostPort = "${host.NAME.toLowerCase()}:${instance.PORTS[0].split(':')[0]}"
-                    echo hostPort
+                    hostPort = "${host.NAME.toLowerCase()}:${host.INSTANCES[0].PORTS[0].split(':')[0]}"
                 }
             }
         }
