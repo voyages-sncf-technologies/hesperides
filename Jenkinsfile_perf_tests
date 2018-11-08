@@ -24,7 +24,7 @@ pipeline {
                 script {
                     git(url: 'https://github.com/voyages-sncf-technologies/hesperides.git',
                         branch: 'develop')
-                    platformContainers = readJSON(text: horsprodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER"))  // http://toolbox-server.socrate.vsct.fr/horsprod/api/toolbox?function=ypath&args=/HES/REL1/DOCKER
+                    platformContainers = readJSON(text: horsprodtoolbox.yPath("/HES/${params.PLATFORM}/DOCKER"))  // http://toolbox-server.socrate.vsct.fr/horsprod/api/toolbox?function=ypath&args=/HES/REL1/DOCKER
                     host = platformContainers.find { it.IMAGE.contains('/hesperides:') }.HOSTS[0]
                     instance = host.INSTANCES[0]
                     hostPort = "${host.NAME}:${instance.PORTS[0].split(':')[0]}"
