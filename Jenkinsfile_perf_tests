@@ -36,7 +36,7 @@ pipeline {
 
         stage('Execute Gatling') {
             steps {
-                sh "mvn -f perfs/pom.xml gatling:execute -Pgatling -Dgatling.simulationClass=HesperidesApi -DbaseUrl=http://${hostPort}/rest -Dauth=${auth} -DusersPerSecond=${usersPerSecond} -Dduration=${duration}"
+                sh "mvn -f perfs/pom.xml gatling:execute -Pgatling -Dgatling.simulationClass=HesperidesApi -DbaseUrl=http://${hostPort}/rest -Dauth=${params.auth} -DusersPerSecond=${params.usersPerSecond} -Dduration=${params.duration}"
             }
         }
     }
