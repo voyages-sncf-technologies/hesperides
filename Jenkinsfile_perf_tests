@@ -43,7 +43,7 @@ pipeline {
                     }
 
                     mvn_cmd = "mvn -f tests/perfs/pom.xml gatling:execute -Pgatling -Dgatling.simulationClass=HesperidesApi -DbaseUrl=http://${hostPort}/rest -Dauth=${auth}"
-                            + "-DusersPerSecond=${params.usersPerSecond} -DpercentOkMin=${percentOkMin} -D99thPercentileResponseTimeMax=${99thPercentileResponseTimeMax}"
+                            + "-DusersPerSecond=${params.usersPerSecond} -DpercentOkMin=${params.percentOkMin} -D99thPercentileResponseTimeMax=${params.99thPercentileResponseTimeMax}"
                 }
             }
         }
