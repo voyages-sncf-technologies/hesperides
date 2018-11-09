@@ -48,12 +48,19 @@ pipeline {
                 }
             }
         }
-        stage('Create tag') {
+        stage('Create tags on 3 projects') {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'github-hesperides-adm-token', variable: 'TOKEN_ID')]) {
                         github.authenticate organization: 'voyages-sncf-technologies', project: 'hesperides', token: "${TOKEN_ID}"
                         github.createRelease tag: "v${params.RELEASE_VERSION}", branch: "release/${params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: false
+                        github.authenticate organization: 'voyages-sncf-technologies', project: 'hesperides-data-migration', token: "${TOKEN_ID}"
+                        github.createRelease tag: "v${params.RELEASE_VERSION}", branch: "release/${params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: false
+                    }
+                    withCredentials([string(credentialsId: 'gitlab_api_token', variable: 'GITLAB_API_TOKEN')]) {
+                        httpRequest(httpMode: 'POST',
+                                    url: "https://gitlab.socrate.vsct.fr/api/v4/projects/hesperides%2Fteeproxy/repository/tags?private_token=${GITLAB_API_TOKEN}" +
+                                         "&ref=master&tag_name=${params.RELEASE_VERSION}")
                     }
                 }
             }
@@ -65,6 +72,8 @@ pipeline {
                         sh "git config user.name \"hesperides-adm\""
                         sh "git checkout develop"
                         sh "git merge release/${params.RELEASE_VERSION}"
+                        sh "sed -i 's~<version>${params.RELEASE_VERSION}</version>~<version>${params.RELEASE_VERSION}-SNAPSHOT</version>~' pom.xml */pom.xml */*/pom.xml"
+                        sh "git commit -am 'Version bump to ${params.RELEASE_VERSION}-SNAPSHOT'"
                         sh "git push https://${USERNAME}:${PASSWORD}@github.com/voyages-sncf-technologies/hesperides.git"
                         sh "git checkout master"
                         sh "git merge release/${params.RELEASE_VERSION}"

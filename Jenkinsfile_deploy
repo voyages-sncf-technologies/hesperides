@@ -23,15 +23,12 @@ pipeline {
             steps {
                 script {
                     // Set params as they will be used later
-                    dockers = horsprodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER")  // http://toolbox-server.socrate.vsct.fr/horsprod/api/toolbox?function=ypath&args=/HES/REL1/DOCKER
-                    dockersJson = readJSON text: "${dockers}"
+                    platformContainers = readJSON(text: horsprodtoolbox.yPath("/HES/${params.platform}/DOCKER").toString()).result  // http://toolbox-server.socrate.vsct.fr/horsprod/api/toolbox?function=ypath&args=/HES/REL1/DOCKER
+                    dockerHosts = platformContainers.HOSTS.collect { it.NAME } as Set
 
                     // Set user
                     wrap([$class: 'BuildUser']) {
-                        user = env.BUILD_USER_ID
-                        if (user == null) {
-                            user = "jenkins"
-                        }
+                        user = env.BUILD_USER_ID ?: 'jenkins'
                     }
                     pprundeck.setRundeckUser(user)
                     // Set up Rundeck token
@@ -44,14 +41,12 @@ pipeline {
         stage('Deploy docker image') {
             steps {
                 script {
-                    for (docker in dockersJson['result']) {
-                        for (host in docker['HOSTS']) {
-                            Map optionsRundeck = [
-                                    refresh_puppet_agent: "complet",
-                                    serveur             : [host['NAME'].toLowerCase()]
-                            ]
-                            pprundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
-                        }
+                    for (host in dockerHosts) {
+                        Map optionsRundeck = [
+                                refresh_puppet_agent: "complet",
+                                serveur             : [host.toLowerCase()]
+                        ]
+                        pprundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
                     }
                 }
             }
@@ -59,19 +54,17 @@ pipeline {
         stage('Restart docker image') {
             steps {
                 script {
-                    for (docker in dockersJson['result']) {
-                        for (host in docker['HOSTS']) {
+                    for (dockerContainer in platformContainers) {
+                        for (host in dockerContainer.HOSTS) {
                             for (instance in host['INSTANCES']) {
                                 Map optionsRundeck = [
-                                        composant  : "DOCKER-${docker["IMAGE"]}",
-                                        instances  : instance['NAME'],
+                                        composant  : "DOCKER-${dockerContainer.IMAGE}",
+                                        instances  : instance.NAME,
                                         trigramme  : app,
                                         techno     : "DOCKER",
-                                        TargetNodes: "${app}${params.PLATFORM}DOCKER${docker["IMAGE"]}-${host['NAME']}",
+                                        TargetNodes: "${app}${params.PLATFORM}DOCKER${dockerContainer.IMAGE}-${host.NAME}",
                                         plateforme : platform,
-                                        serveur    : host['NAME'].toLowerCase(),
-
-
+                                        serveur    : host.NAME.toLowerCase(),
                                 ]
                                 pprundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
                             }

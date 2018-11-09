@@ -4,6 +4,10 @@
 
 **Continous Delivery** ==> manual deployment
 
+## Installation du hook git de pre-commit
+
+    cp pre-commit.hook.sh .git/hooks/pre-commit
+
 ## Description des pipelines
 
 ### Pipelines de build
