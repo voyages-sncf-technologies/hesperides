@@ -15,7 +15,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     parameters {
-        string(name: 'auth', defaultValue: 'tech:password', description: 'user:password ou simplement un credentialsId (ex: "hesperides" pour le hors-prod), le user/password sera alors récupéré des Credentials Jenkins')
+        string(name: 'auth', defaultValue: 'hesperides', description: """user:password (ex: "tech:password") ou simplement un credentialsId d'où tirer le user/password""")
         choice(name: "platform", choices: platformsList, description: 'Plateforme sur laquelle sera fait le test de charge')
         choice(name: "container", choices: ['teeproxy', 'hesperides'])
         string(name: 'usersPerSecond', defaultValue: '20')
