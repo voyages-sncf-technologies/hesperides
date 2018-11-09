@@ -15,11 +15,11 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     parameters {
-        string(name: 'auth', description: 'user:password ou simplement un credentialsId (ex: "hesperides" pour le hors-prod), le user/password sera alors récupéré des Credentials Jenkins', defaultValue: 'tech:password')
+        string(name: 'auth', defaultValue: 'tech:password', description: 'user:password ou simplement un credentialsId (ex: "hesperides" pour le hors-prod), le user/password sera alors récupéré des Credentials Jenkins')
         choice(name: "platform", choices: platformsList, description: 'Plateforme sur laquelle sera fait le test de charge')
         choice(name: "container", choices: ['teeproxy', 'hesperides'])
         string(name: 'usersPerSecond', defaultValue: '20')
-        string(name: 'duration', defaultValue: '60seconds')
+        string(name: 'duration', defaultValue: '60seconds', 'Une phase de "warmup" de 20s est systématiquement effectuée au préalable')
     }
     stages {
         stage('Pull Project') {
@@ -32,19 +32,31 @@ pipeline {
                     host = platformContainers.find { it.IMAGE.contains('/'+params.container+':') }.HOSTS[0]
                     hostPort = "${host.NAME.toLowerCase()}:${host.INSTANCES[0].PORTS[0].split(':')[0]}"
 
-                    if (!params.auth.contains(':')) {
+                    if (params.auth.contains(':')) {
+                        auth = params.auth
+                    } else {
                         withCredentials([usernamePassword(credentialsId: params.auth, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                            params.auth = "${env.USERNAME}:${env.PASSWORD}"
+                            auth = "${env.USERNAME}:${env.PASSWORD}"
                         }
                     }
+
+                    mvn_cmd = "mvn -f tests/perfs/pom.xml gatling:execute -Pgatling -Dgatling.simulationClass=HesperidesApi -DbaseUrl=http://${hostPort}/rest -Dauth=${auth} -DusersPerSecond=${params.usersPerSecond}"
                 }
             }
         }
 
-        stage('Execute Gatling') {
+        stage("Warmup de l'appli") {
             steps {
                 withMaven() {
-                    sh "mvn -f tests/perfs/pom.xml gatling:execute -Pgatling -Dgatling.simulationClass=HesperidesApi -DbaseUrl=http://${hostPort}/rest -Dauth=${params.auth} -DusersPerSecond=${params.usersPerSecond} -Dduration=${params.duration}"
+                    sh "${mvn_cmd} -Dduration=20seconds"
+                }
+            }
+        }
+        
+        stage('Gatling stress test') {
+            steps {
+                withMaven() {
+                    sh "${mvn_cmd} -Dduration=${params.duration}"
                 }
             }
         }
