@@ -18,8 +18,10 @@ pipeline {
         string(name: 'auth', defaultValue: 'hesperides', description: """user:password (ex: "tech:password") ou simplement un credentialsId d'où tirer le user/password""")
         choice(name: "platform", choices: platformsList, description: 'Plateforme sur laquelle sera fait le test de charge')
         choice(name: "container", choices: ['teeproxy', 'hesperides'])
-        string(name: 'usersPerSecond', defaultValue: '20')
         string(name: 'duration', defaultValue: '60seconds', description: 'Une phase de "warmup" de 20s est systématiquement effectuée au préalable')
+        string(name: 'usersPerSecond', defaultValue: '20')
+        string(name: 'percentOkMin', defaultValue: '99', description: "% d'appels qui doivent être OK pour que le test soit un succès")
+        string(name: '99thPercentileResponseTimeMax', defaultValue: '500', description: "temps de réponse max acceptable (en ms) pour l'ensemble des 1% des requêtes les plus lentes")
     }
     stages {
         stage('Pull Project') {
@@ -40,7 +42,8 @@ pipeline {
                         }
                     }
 
-                    mvn_cmd = "mvn -f tests/perfs/pom.xml gatling:execute -Pgatling -Dgatling.simulationClass=HesperidesApi -DbaseUrl=http://${hostPort}/rest -Dauth=${auth} -DusersPerSecond=${params.usersPerSecond}"
+                    mvn_cmd = "mvn -f tests/perfs/pom.xml gatling:execute -Pgatling -Dgatling.simulationClass=HesperidesApi -DbaseUrl=http://${hostPort}/rest -Dauth=${auth}"
+                            + "-DusersPerSecond=${params.usersPerSecond} -DpercentOkMin=${percentOkMin} -D99thPercentileResponseTimeMax=${99thPercentileResponseTimeMax}"
                 }
             }
         }
