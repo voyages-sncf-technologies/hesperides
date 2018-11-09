@@ -17,7 +17,7 @@ pipeline {
     parameters {
         string(name: 'auth', description: 'user:password', defaultValue: 'tech:password')
         choice(name: "platform", choices: platformsList, description: 'Plateforme sur laquelle sera fait le test de charge')
-        choice(name: "container", choices: ['hesperides', 'teeproxy'])
+        choice(name: "container", choices: ['teeproxy', 'hesperides'])
         string(name: 'usersPerSecond', defaultValue: '20')
         string(name: 'duration', defaultValue: '60seconds')
     }
@@ -36,7 +36,7 @@ pipeline {
 
         stage('Execute Gatling') {
             steps {
-                sh "mvn -f perfs/pom.xml gatling:execute -Pgatling -Dgatling.simulationClass=HesperidesApi -DbaseUrl=http://${hostPort}/rest -Dauth=${params.auth} -DusersPerSecond=${params.usersPerSecond} -Dduration=${params.duration}"
+                sh "ls -l && mvn -f perfs/pom.xml gatling:execute -Pgatling -Dgatling.simulationClass=HesperidesApi -DbaseUrl=http://${hostPort}/rest -Dauth=${params.auth} -DusersPerSecond=${params.usersPerSecond} -Dduration=${params.duration}"
             }
         }
     }
