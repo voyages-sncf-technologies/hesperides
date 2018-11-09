@@ -19,7 +19,7 @@ pipeline {
         choice(name: "platform", choices: platformsList, description: 'Plateforme sur laquelle sera fait le test de charge')
         choice(name: "container", choices: ['teeproxy', 'hesperides'])
         string(name: 'usersPerSecond', defaultValue: '20')
-        string(name: 'duration', defaultValue: '60seconds', 'Une phase de "warmup" de 20s est systématiquement effectuée au préalable')
+        string(name: 'duration', defaultValue: '60seconds', description: 'Une phase de "warmup" de 20s est systématiquement effectuée au préalable')
     }
     stages {
         stage('Pull Project') {
