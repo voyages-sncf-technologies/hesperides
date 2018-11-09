@@ -48,7 +48,7 @@ pipeline {
         stage("Warmup de l'appli") {
             steps {
                 withMaven() {
-                    sh "${mvn_cmd} -Dduration=20seconds"
+                    sh "${mvn_cmd} -Dduration=20seconds || true"
                 }
             }
         }
