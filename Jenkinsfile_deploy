@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     // Set params as they will be used later
-                    platformContainers = readJSON(text: horsprodtoolbox.yPath("/HES/${params.platform}/DOCKER").toString()).result  // http://toolbox-server.socrate.vsct.fr/horsprod/api/toolbox?function=ypath&args=/HES/REL1/DOCKER
+                    platformContainers = readJSON(text: horsprodtoolbox.yPath("/HES/${params.PLATFORM}/DOCKER").toString()).result  // http://toolbox-server.socrate.vsct.fr/horsprod/api/toolbox?function=ypath&args=/HES/REL1/DOCKER
                     dockerHosts = platformContainers.HOSTS.collect { it.NAME } as Set
 
                     // Set user
@@ -41,10 +41,10 @@ pipeline {
         stage('Deploy docker image') {
             steps {
                 script {
-                    for (host in dockerHosts) {
+                    dockerHosts.each { host ->
                         Map optionsRundeck = [
                                 refresh_puppet_agent: "complet",
-                                serveur             : [host.toLowerCase()]
+                                serveur             : [host[0].toLowerCase()]
                         ]
                         pprundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
                     }
