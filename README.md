@@ -34,8 +34,10 @@ construit l'image depuis le repo Gitlab, et la pushe vers Artifactory.
   * crée une _release branch_ sur le projet GitHub [hesperides](https://github.com/voyages-sncf-technologies/hesperides)
   * crée un release GitHub, et donc un tag `git`, sur le projet GitHub [hesperides](https://github.com/voyages-sncf-technologies/hesperides)
   * cette release doit déclencher la création d'une nouvelle image Docker taguée sur le [Dockerhub public](https://hub.docker.com/r/hesperides/hesperides/)
+  * effectue la montée de version aplicative dans les `pom.xml`
   * merge & push de cette release sur les branches `develop` & `master` (c'est le "git workflow" classique)
-  * déclenche les 3 jobs `Jenkinsfile*_build_docker_image` pour generée les images Docker des 3 composants pour cette release
+  * crée un tag git correspondant à la release sur chacun des 3 repos
+  * déclenche les 3 jobs `Jenkinsfile*_build_docker_image` pour générer les images Docker des 3 composants pour cette release
 
 ### Pipelines de déploiement
 
