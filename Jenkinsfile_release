@@ -54,9 +54,11 @@ pipeline {
                 script {
                     withCredentials([string(credentialsId: 'github-hesperides-adm-token', variable: 'TOKEN_ID')]) {
                         github.authenticate organization: 'voyages-sncf-technologies', project: 'hesperides', token: "${TOKEN_ID}"
-                        github.createRelease tag: "v${params.RELEASE_VERSION}", branch: "release/${params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: false
-                        github.authenticate organization: 'voyages-sncf-technologies', project: 'hesperides-data-migration', token: "${TOKEN_ID}"
-                        github.createRelease tag: "v${params.RELEASE_VERSION}", branch: "master", description: "${params.RELEASE_VERSION}", draft: false, prerelease: false
+                        github.createRelease tag: "v${params.RELEASE_VERSION}", branch: "release/${params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}"
+                        // Lucas 2018-11-27: pour l'instant cette opération ne fonctionne pas, on obtient une 404.
+                        // Une fois le mdp du user GitHub hesperides-adm récupéré, il faudrait essayé de comprendre s'il lui manque des droits sur hesperides-data-migration
+                        //github.authenticate organization: 'voyages-sncf-technologies', project: 'hesperides-data-migration', token: "${TOKEN_ID}"
+                        //github.createRelease tag: "v${params.RELEASE_VERSION}", branch: "master", description: "${params.RELEASE_VERSION}"
                     }
                     withCredentials([string(credentialsId: 'gitlab_api_token', variable: 'GITLAB_API_TOKEN')]) {
                         httpRequest(httpMode: 'POST',
