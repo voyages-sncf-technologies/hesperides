@@ -9,9 +9,12 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
+    triggers {
+        cron('0 3 * * 1-5')
+    }
     parameters {
         string(name: 'GIT_REF', defaultValue: 'master', description: 'git ref identifying source code version')
-        string(name: 'DOCKER_TAG', defaultValue: 'master', description: 'Docker tag\'s name')
+        string(name: 'DOCKER_TAG', defaultValue: 'master', description: "Docker tag's name")
     }
     stages {
         stage("Pull Project") {

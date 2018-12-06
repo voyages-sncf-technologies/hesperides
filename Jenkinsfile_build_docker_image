@@ -18,6 +18,9 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
+    triggers {
+        cron('0 1 * * 1-5')
+    }
     parameters {
         string(name: 'DOCKER_TAG', defaultValue: 'develop', description: 'Branch or version tag starting with a "v"')
     }
@@ -31,6 +34,33 @@ pipeline {
                         sh "docker push docker-vsct.pkg.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
                     }
                 }
+            }
+        }
+    }
+    post {
+        always {
+            deleteDir()
+        }
+        changed {
+            script {
+                if (currentBuild.currentResult == 'SUCCESS') {
+                    color = "green"
+                    icone_name = "ok"
+                } else {
+                    color = "red"
+                    icone_name = "ko"
+                }
+                sendMsgToHipchat(
+                        authToken: "y5Wookis5ygwBWudp6iucYVXfJ1jdglCOr5yb3tH",
+                        roomNumber: "4234577",
+                        proxy: "http://proxy-lil:80",
+                        title: "${JOB_NAME}",
+                        message: "Job Status : ${currentBuild.currentResult}",
+                        url: "${BUILD_URL}",
+                        debug: false,
+                        color: "$color",
+                        iconName: "$icone_name"
+                )
             }
         }
     }

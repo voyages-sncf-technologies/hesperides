@@ -52,6 +52,7 @@ pipeline {
         stage('Create tags on 3 projects') {
             steps {
                 script {
+                    // En cas d'erreur HTTP 422 ici, c'est probablement que le tag existe déjà...
                     withCredentials([string(credentialsId: 'github-hesperides-adm-token', variable: 'TOKEN_ID')]) {
                         github.authenticate organization: 'voyages-sncf-technologies', project: 'hesperides', token: "${TOKEN_ID}"
                         github.createRelease tag: "v${params.RELEASE_VERSION}", branch: "release/${params.RELEASE_VERSION}", description: "${params.RELEASE_VERSION}", draft: false, prerelease: false
