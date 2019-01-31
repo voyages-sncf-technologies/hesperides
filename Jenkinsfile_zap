@@ -1,6 +1,8 @@
 #!groovy
 
-@Library(["zapUtils"]) _
+@Library("zapUtils") _
+ 
+import com.oui.technologies.*
 
 pipeline {
     agent {
@@ -18,9 +20,10 @@ pipeline {
                     sh 'nohup mvnw spring-boot:run -pl bootstrap -Dspring.profiles.active=fake_mongo,noldap &'
                     // TODO: wait + cleanup (kill)
                     sh 'sleep 30'
-                    mvnCmd = 'mvn verify -pl tests/integration -Dexec.mainClass=org.hesperides.test.integration.CucumberIntegTests'
+                    def mvnCmd = 'mvn verify -pl tests/integration -Dexec.mainClass=org.hesperides.test.integration.CucumberIntegTests'
                            + "-Dintegration-bdd.proxy-host=localhost -Dintegration-bdd.proxy-port=3128"
-                    zapUtils.runOrder('java', 8, mvnCmd, 'LCimon@oui.sncf', 'http://localhost:8080/rest', false)
+                    def zapTest = new zapUtils(this)
+                    zapTest.runOrder('java', 8, mvnCmd, 'LCimon@oui.sncf', 'http://localhost:8080/rest', false)
                 }
             }
         }
