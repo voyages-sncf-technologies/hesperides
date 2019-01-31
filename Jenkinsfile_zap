@@ -29,10 +29,11 @@ pipeline {
                     withMaven() {
                         sh 'mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true'
                         sh 'nohup mvn spring-boot:run -pl bootstrap -Dspring.profiles.active=fake_mongo,noldap > nohup.out 2>&1 &'
-                        sh 'while ! curl --fail http://localhost:8080/rest/manage/health; do sleep 5; cat nohup.out || true; done'
+                        sh 'while ! curl --fail http://localhost:8080/rest/manage/health; do sleep 5; done'
                         def zapTest = new zapUtils(this)
                         def mvnCmd = 'mvn verify -pl tests/integration -Dexec.mainClass=org.hesperides.test.integration.CucumberIntegTests -Dintegration-bdd.proxy-host=localhost -Dintegration-bdd.proxy-port=3128'
                         zapTest.runOrder('java', 8, mvnCmd, 'LCimon@oui.sncf', 'http://localhost:8080/rest', false)
+                        sh 'cat nohup.out'
                         // TODO: cleanup (kill background job)
                     }
                 }
