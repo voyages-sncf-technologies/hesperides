@@ -1,0 +1,33 @@
+#!groovy
+
+@Library(["zapUtils"]) _
+
+pipeline {
+    agent {
+        node {
+            label 'maven'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    stages {
+        stage('Run integration tests through ZAP proxy') {
+            steps {
+                script {
+                    sh 'nohup mvnw spring-boot:run -pl bootstrap -Dspring.profiles.active=fake_mongo,noldap &'
+                    // TODO: wait + cleanup (kill)
+                    sh 'sleep 30'
+                    mvnCmd = 'mvn verify -pl tests/integration -Dexec.mainClass=org.hesperides.test.integration.CucumberIntegTests'
+                           + "-Dintegration-bdd.proxy-host=localhost -Dintegration-bdd.proxy-port=3128"
+                    zapUtils.runOrder('java', 8, mvnCmd, 'LCimon@oui.sncf', 'http://localhost:8080/rest', false)
+                }
+            }
+        }
+    }
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}
