@@ -38,9 +38,11 @@ pipeline {
             steps {
                 script {
                     withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                        sh "mvn help:effective-settings"
-                        // La commande suivante crée la branche git release/${params.RELEASE_VERSION}
-                        sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION}"
+                        withMaven(mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
+                            sh "mvn help:effective-settings"
+                            // La commande suivante crée la branche git release/${params.RELEASE_VERSION}
+                            sh "mvn -B gitflow:release-start -DreleaseVersion=${params.RELEASE_VERSION}"
+                        }
                     }
                     withCredentials([usernamePassword(credentialsId: 'github-hesperides-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "git config user.name \"hesperides-adm\""

@@ -50,16 +50,20 @@ pipeline {
 
         stage("Warmup de l'appli") {
             steps {
-                withMaven() {
-                    sh "${mvn_cmd} -Dduration=20seconds || true"
+                withMaven(mavenSettingsConfig: 'global_maven_settings') {
+                    withMaven(mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
+                        sh "${mvn_cmd} -Dduration=20seconds || true"
+                    }
                 }
             }
         }
         
         stage('Gatling stress test') {
             steps {
-                withMaven() {
-                    sh "${mvn_cmd} -Dduration=${params.duration}"
+                withMaven(mavenSettingsConfig: 'global_maven_settings') {
+                    withMaven(mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
+                        sh "${mvn_cmd} -Dduration=${params.duration}"
+                    }
                 }
             }
         }

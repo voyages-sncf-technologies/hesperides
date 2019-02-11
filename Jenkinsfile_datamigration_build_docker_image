@@ -30,12 +30,14 @@ pipeline {
             steps {
                 script {
                     withMaven(mavenSettingsConfig: 'global_maven_settings') {
-                        sh "mvn help:effective-settings"
-                        sh 'mvn clean package'
+                        withMaven(mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
+                            sh "mvn help:effective-settings"
+                            sh 'mvn clean package'
+                        }
                     }
-                    withCredentials([usernamePassword(credentialsId: 'artifactory-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        docker.withRegistry("http://docker-vsct.pkg.cloud.socrate.vsct.fr") {
-                            sh "docker login --username ${USERNAME} --password '${PASSWORD}' docker-vsct.pkg.cloud.socrate.vsct.fr"
+                    withCredentials([usernamePassword(credentialsId: 'usl_ci', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        docker.withRegistry("https://hesperides-docker-all.artifact.cloud.socrate.vsct.fr") {
+                            sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
                             sh "docker build --force-rm --no-cache --pull --label git_commit=`git rev-parse --short HEAD` --label tuyauterie_git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} . -t hesperides/hesperides-data-migration:${params.DOCKER_TAG}"
                             dockerImage = docker.image("hesperides/hesperides-data-migration:${params.DOCKER_TAG}")
                             dockerImage.push()
