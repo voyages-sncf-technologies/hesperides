@@ -32,6 +32,10 @@ pipeline {
                     withMaven(mavenSettingsConfig: 'global_maven_settings') {
                         withMaven(mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
                             sh "mvn help:effective-settings"
+                            if (params.DOCKER_TAG.contains('.')) {
+                                def pomVersion = params.DOCKER_TAG.startsWith('v') ? params.DOCKER_TAG.substring(1) : params.DOCKER_TAG
+                                sh "sed -i 's~<version>.*-SNAPSHOT</version>~<version>${pomVersion}</version>~' pom.xml"
+                            }
                             sh 'mvn clean package'
                         }
                     }
