@@ -18,7 +18,8 @@ pipeline {
         string(name: 'auth', defaultValue: 'hesperides', description: """user:password (ex: "tech:password") ou simplement un credentialsId d'où tirer le user/password""")
         choice(name: "platform", choices: platformsList, description: 'Plateforme sur laquelle sera fait le test de charge')
         choice(name: "container", choices: ['teeproxy', 'vsct-hesperides'])
-        string(name: 'duration', defaultValue: '30seconds', description: 'Une phase de "warmup" de 20s est systématiquement effectuée au préalable')
+        string(name: 'warmUpDuration', defaultValue: '30s')
+        string(name: 'duration', defaultValue: '5min')
         string(name: 'usersPerSecond', defaultValue: '4')
         string(name: 'percentOkMin', defaultValue: '99', description: "% d'appels qui doivent être OK pour que le test soit un succès")
         string(name: 'percentile99ResponseTimeMax', defaultValue: '100', description: "temps de réponse max acceptable (en ms) pour l'ensemble des 1% des requêtes les plus lentes")
@@ -52,7 +53,7 @@ pipeline {
             steps {
                 withMaven(mavenSettingsConfig: 'global_maven_settings') {
                     withMaven(mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
-                        sh "${mvn_cmd} -Dduration=5seconds || true"
+                        sh "${mvn_cmd} -Dduration=${params.warmUpDuration} || true"
                     }
                 }
             }
