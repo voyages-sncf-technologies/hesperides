@@ -22,7 +22,7 @@ pipeline {
         stage("Pull Project") {
             steps {
                 script {
-                    git(url: 'git@github.com:voyages-sncf-technologies/hesperides-gui.git',
+                    git(url: 'https://github.com/voyages-sncf-technologies/hesperides-gui.git',
                         branch: params.GIT_REF)
                 }
             }
