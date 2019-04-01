@@ -15,7 +15,12 @@
 - `Jenkinsfile_build_docker_image` ([job jenkins](https://master.jenkins.cloud.socrate.vsct.fr/job/A_HESPERIDES/job/continuous-delivery/job/build_docker_image/)):
 Pipeline de création de l'image d'[Hesperides](https://github.com/voyages-sncf-technologies/hesperides) pour publication sur le dépôt Docker interne :
 récupère l'image Docker du [Dockerhub public](https://hub.docker.com/r/hesperides/hesperides/) pour la surcharger avec le certificat de l'Active Directory, et la pusher vers Artifactory.
-_cf._ [docker/Dockerfile](docker/Dockerfile)
+_cf._ [vsct-hesperides/Dockerfile](vsct-hesperides/Dockerfile)
+
+- `Jenkinsfile_build_docker_image_for_gui` ([job jenkins](https://master.jenkins.cloud.socrate.vsct.fr/job/A_HESPERIDES/job/continuous-delivery/job/build_docker_image_for_gui/)):
+Pipeline de création de l'image d'[hesperides-gui](https://github.com/voyages-sncf-technologies/hesperides-gui) pour publication sur le dépôt Docker interne :
+récupère l'image Docker du [Dockerhub public](https://hub.docker.com/r/hesperides/hesperides-gui/) pour la surcharger avec le certificat de l'Active Directory, et la pusher vers Artifactory.
+_cf._ [vsct-hesperides-gui/Dockerfile](vsct-hesperides-gui/Dockerfile)
 
 - `Jenkinsfile_build_docker_image_nigthly` ([job jenkins](https://master.jenkins.cloud.socrate.vsct.fr/job/A_HESPERIDES/job/continuous-delivery/job/build_docker_image_nigthly/)):
 Déclenche le job précédent toutes les nuits
