@@ -110,6 +110,20 @@ pipeline {
                 build job: "build_docker_image", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: "v${params.RELEASE_VERSION}"]]
             }
         }
+        stage('Trigger hesperides-gui image generation for this release') {
+            steps {
+                timeout(time: 900, unit: 'SECONDS') {
+                    waitUntil {   // We wait for Travis CI to build the Docker image with the new tag
+                        sleep 10  // to avoid hitting Docker hub API too frequently
+                        script {
+                            def tags = new JsonSlurperClassic().parseText(httpRequest(httpProxy: env.http_proxy, url: 'https://registry.hub.docker.com/v1/repositories/hesperides/hesperides-gui/tags').content)
+                            return tags.any { it.name == "v${params.RELEASE_VERSION}" }
+                        }
+                    }
+                }
+                build job: "build_docker_image_for_gui", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: "v${params.RELEASE_VERSION}"]]
+            }
+        }
     }
 
     post {
