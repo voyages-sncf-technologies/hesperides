@@ -42,7 +42,7 @@ construit l'image depuis le repo Gitlab, et la pushe vers Artifactory.
   * effectue la montée de version aplicative dans les `pom.xml`
   * merge & push de cette release sur les branches `develop` & `master` (c'est le "git workflow" classique)
   * crée un tag git correspondant à la release sur chacun des 3 repos
-  * déclenche les 3 jobs `Jenkinsfile*_build_docker_image` pour générer les images Docker des 3 composants pour cette release
+  * déclenche les 4 jobs `Jenkinsfile*_build_docker_image*` pour générer les images Docker des 4 composants pour cette release
 
 ### Pipelines de déploiement
 

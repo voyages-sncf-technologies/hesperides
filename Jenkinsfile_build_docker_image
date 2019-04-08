@@ -4,9 +4,9 @@
 
 /**
  * Pipeline de création de l'image Docker pour VSCT :
- * Récupère l'image Docker du Dockerhub pour la surcharger
- * avec le certificat de l'Active Directory,
- * et la pusher vers le dépôt VSCT (Artifactory).
+ * Construit l'image Docker à partir du repo Github
+ * en ajoutant le certificat de l'Active Directory,
+ * pui la push vers le dépôt VSCT (Artifactory).
  */
 
 pipeline {
@@ -28,10 +28,15 @@ pipeline {
     stages {
         stage('Build docker image') {
             steps {
+                dir ('hesperides') {
+                    git 'https://github.com/voyages-sncf-technologies/hesperides'
+                }
                 script {
                     withCredentials([usernamePassword(credentialsId: 'usl_ci', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
-                        sh "docker build --no-cache --pull --label tuyauterie_git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG} ./vsct-hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
+                        sh "cat vsct-hesperides/Dockerfile.append >> hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.append"
+                        sh "cp -r vsct-hesperides/* hesperides/"
+                        sh "docker build --no-cache --pull --label git_commit=\$(cd hesperides && git describe --always) --label tuyauterie_git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
                         // Displaying all the labels of the image:
                         sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
                         sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
