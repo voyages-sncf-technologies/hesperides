@@ -36,8 +36,8 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'usl_ci', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
+                        sh 'sed -i "/FROM / r vsct-hesperides/Dockerfile.prepend" hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.prepend'
                         sh 'cat vsct-hesperides/Dockerfile.append >> hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.append'
-                        sh 'sed -i '/FROM / r vsct-hesperides/Dockerfile.prepend' hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.prepend'
                         sh 'cp -r vsct-hesperides/* hesperides/'
                         withMaven(globalMavenSettingsConfig: 'global_maven_settings', mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
                             def mvnDockerArgs = "--build-arg MVN_SETTINGS --build-arg GLOBAL_MVN_SETTINGS"
