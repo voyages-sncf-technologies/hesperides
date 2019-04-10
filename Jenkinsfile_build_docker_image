@@ -43,7 +43,7 @@ pipeline {
                                 def mvnDockerArgs = "-v ${env.MVN_SETTINGS}:/tmp/settings.xml -e MVN_SETTINGS=/tmp/settings.xml"
                                 mvnDockerArgs += " -v ${env.GLOBAL_MVN_SETTINGS}:/tmp/globalSettings.xml -e GLOBAL_MVN_SETTINGS=/tmp/globalSettings.xml"
                                 def proxyBuildArgs = "--build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG}"
-                                def hesperidesGitCommit = sh(returnStdout: true, script: 'cd hesperides && git rev-parse --short HEAD')
+                                def hesperidesGitCommit = sh(returnStdout: true, script: 'cd hesperides && git rev-parse --short HEAD').trim()
                                 def labelArgs = "--label git_commit=${hesperidesGitCommit} --label tuyauterie_git_commit=${GIT_COMMIT}"
                                 sh "docker build --no-cache --pull ${labelArgs} ${mvnDockerArgs} ${proxyBuildArgs} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
                             }
