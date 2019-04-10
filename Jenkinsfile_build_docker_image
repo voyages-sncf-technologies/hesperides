@@ -23,20 +23,31 @@ pipeline {
         cron('0 1 * * 1-5')
     }
     parameters {
+        string(name: 'GIT_BRANCH', defaultValue: 'develop', description: 'identify source code version')
         string(name: 'DOCKER_TAG', defaultValue: 'develop', description: 'Branch or version tag starting with a "v"')
     }
     stages {
         stage('Build docker image') {
             steps {
                 dir ('hesperides') {
-                    git 'https://github.com/voyages-sncf-technologies/hesperides'
+                    git(url: 'https://github.com/voyages-sncf-technologies/hesperides',
+                        branch: params.GIT_BRANCH)
                 }
                 script {
                     withCredentials([usernamePassword(credentialsId: 'usl_ci', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
                         sh "cat vsct-hesperides/Dockerfile.append >> hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.append"
                         sh "cp -r vsct-hesperides/* hesperides/"
-                        sh "docker build --no-cache --pull --label git_commit=\$(cd hesperides && git describe --always) --label tuyauterie_git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
+                        withMaven(mavenSettingsConfig: 'global_maven_settings') {
+                            withMaven(mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
+                                def mvnDockerArgs = "-v ${env.MVN_SETTINGS}:/tmp/settings.xml -e MVN_SETTINGS=/tmp/settings.xml"
+                                mvnDockerArgs += " -v ${env.GLOBAL_MVN_SETTINGS}:/tmp/globalSettings.xml -e GLOBAL_MVN_SETTINGS=/tmp/globalSettings.xml"
+                                def proxyBuildArgs = "--build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG}"
+                                def hesperidesGitCommit = sh(returnStdout: true, script: 'cd hesperides && git rev-parse --short HEAD')
+                                def labelArgs = sh("--label git_commit=${hesperidesGitCommit} --label tuyauterie_git_commit=${GIT_COMMIT}"
+                                sh "docker build --no-cache --pull ${labelArgs} ${mvnDockerArgs} ${proxyBuildArgs} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
+                            }
+                        }
                         // Displaying all the labels of the image:
                         sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
                         sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
