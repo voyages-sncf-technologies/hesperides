@@ -34,21 +34,26 @@ pipeline {
                         branch: params.GIT_BRANCH)
                 }
                 script {
+                    // On complète le Dockerfile pour inclure les fichiers settings.xml & globalSettings.xml durant le build Maven,
+                    // ainsi que les certifcats dans l'image finale :
+                    sh 'sed -i "1 r vsct-hesperides/Dockerfile.prepend" hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.prepend'
+                    sh 'cat vsct-hesperides/Dockerfile.append >> hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.append'
+                    sh 'cp -r vsct-hesperides/* hesperides/'
+                    // On définit les labels et on passe les variables d'environnement des proxys HTTP
+                    def proxyBuildArgs = "--build-arg http_proxy --build-arg https_proxy --build-arg DOCKER_TAG"
+                    def hesperidesGitCommit = sh(returnStdout: true, script: 'cd hesperides && git rev-parse --short HEAD').trim()
+                    def labelArgs = "--label git_commit=${hesperidesGitCommit} --label tuyauterie_git_commit=${GIT_COMMIT}"
+                    // On build l'image Docker :
+                    withMaven(globalMavenSettingsConfig: 'global_maven_settings', mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
+                        sh 'cp $MVN_SETTINGS hesperides/settings.xml'
+                        sh 'cp $GLOBAL_MVN_SETTINGS hesperides/globalSettings.xml'
+                        sh "docker build --no-cache --pull ${labelArgs} ${proxyBuildArgs} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
+                    }
+                    // On affiche tous les labels de l'image générée :
+                    sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
+                    // On publie l'image sur artifactory :
                     withCredentials([usernamePassword(credentialsId: 'usl_ci', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
-                        sh 'sed -i "/FROM / r vsct-hesperides/Dockerfile.prepend" hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.prepend'
-                        sh 'cat vsct-hesperides/Dockerfile.append >> hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.append'
-                        sh 'cp -r vsct-hesperides/* hesperides/'
-                        withMaven(globalMavenSettingsConfig: 'global_maven_settings', mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
-                            sh 'cp $MVN_SETTINGS hesperides/settings.xml'
-                            sh 'cp $GLOBAL_MVN_SETTINGS hesperides/globalSettings.xml'
-                            def proxyBuildArgs = "--build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG}"
-                            def hesperidesGitCommit = sh(returnStdout: true, script: 'cd hesperides && git rev-parse --short HEAD').trim()
-                            def labelArgs = "--label git_commit=${hesperidesGitCommit} --label tuyauterie_git_commit=${GIT_COMMIT}"
-                            sh "docker build --no-cache --pull ${labelArgs} ${proxyBuildArgs} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
-                        }
-                        // Displaying all the labels of the image:
-                        sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
                         sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
                     }
                 }
