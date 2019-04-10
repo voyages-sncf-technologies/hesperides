@@ -1,8 +1,6 @@
 
 RUN mkdir ~/.m2/
-ARG GLOBAL_MVN_SETTINGS
-COPY $GLOBAL_MVN_SETTINGS ~/.m2/
-ARG MVN_SETTINGS
-COPY $MVN_SETTINGS ~/.m2/
+COPY globalSettings.xml ~/.m2/
+COPY settings.xml ~/.m2/
 RUN ls -l ~/.m2/
 

@@ -40,13 +40,12 @@ pipeline {
                         sh 'cat vsct-hesperides/Dockerfile.append >> hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.append'
                         sh 'cp -r vsct-hesperides/* hesperides/'
                         withMaven(globalMavenSettingsConfig: 'global_maven_settings', mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
-                            sh 'cp $MVN_SETTINGS .'
-                            sh 'cp $GLOBAL_MVN_SETTINGS .'
-                            def mvnDockerArgs = "--build-arg MVN_SETTINGS=settings.xml --build-arg GLOBAL_MVN_SETTINGS=globalSettings.xml"
+                            sh 'cp $MVN_SETTINGS hesperides/settings.xml'
+                            sh 'cp $GLOBAL_MVN_SETTINGS hesperides/globalSettings.xml'
                             def proxyBuildArgs = "--build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG}"
                             def hesperidesGitCommit = sh(returnStdout: true, script: 'cd hesperides && git rev-parse --short HEAD').trim()
                             def labelArgs = "--label git_commit=${hesperidesGitCommit} --label tuyauterie_git_commit=${GIT_COMMIT}"
-                            sh "docker build --no-cache --pull ${labelArgs} ${mvnDockerArgs} ${proxyBuildArgs} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
+                            sh "docker build --no-cache --pull ${labelArgs} ${proxyBuildArgs} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
                         }
                         // Displaying all the labels of the image:
                         sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
