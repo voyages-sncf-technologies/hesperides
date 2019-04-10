@@ -40,7 +40,7 @@ pipeline {
                         sh 'cat vsct-hesperides/Dockerfile.append >> hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.append'
                         sh 'cp -r vsct-hesperides/* hesperides/'
                         withMaven(globalMavenSettingsConfig: 'global_maven_settings', mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
-                            sh 'cp $MVN_SETTINGS .
+                            sh 'cp $MVN_SETTINGS .'
                             sh 'cp $GLOBAL_MVN_SETTINGS .'
                             def mvnDockerArgs = "--build-arg MVN_SETTINGS=settings.xml --build-arg GLOBAL_MVN_SETTINGS=globalSettings.xml"
                             def proxyBuildArgs = "--build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG}"
