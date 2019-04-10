@@ -23,7 +23,7 @@ pipeline {
         stage('Build docker image') {
             steps {
                 dir ('hesperides-gui') {
-                    git(url: 'https://github.com/voyages-sncf-technologies/hesperides',
+                    git(url: 'https://github.com/voyages-sncf-technologies/hesperides-gui',
                         branch: params.GIT_BRANCH)
                 }
                 script {
