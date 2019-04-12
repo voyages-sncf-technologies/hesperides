@@ -37,7 +37,7 @@ pipeline {
                     // On complète le Dockerfile pour inclure les fichiers settings.xml & globalSettings.xml durant le build Maven,
                     // ainsi que les certifcats dans l'image finale :
                     sh 'sed -i "1 r vsct-hesperides/Dockerfile.prepend" hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.prepend'
-                    sh 'sed -i "\$ d" hesperides/Dockerfile && cat vsct-hesperides/Dockerfile.append >> hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.append'
+                    sh 'cat vsct-hesperides/Dockerfile.append >> hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.append'
                     sh 'cp -r vsct-hesperides/* hesperides/'
                     // On définit les labels et on passe les variables d'environnement des proxys HTTP
                     def proxyBuildArgs = "--build-arg http_proxy --build-arg https_proxy --build-arg DOCKER_TAG"
