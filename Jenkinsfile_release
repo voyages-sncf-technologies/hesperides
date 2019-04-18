@@ -61,7 +61,7 @@ pipeline {
                         github.authenticate organization: 'voyages-sncf-technologies', project: 'hesperides-data-migration', token: "${TOKEN_ID}"
                         github.createRelease tag: "v${params.RELEASE_VERSION}", branch: "master", description: "${params.RELEASE_VERSION}", draft: false, prerelease: false
                     }
-                    withCredentials([string(credentialsId: 'gitlab_api_token', variable: 'GITLAB_API_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'gitlab_api_admin', variable: 'GITLAB_API_TOKEN')]) {
                         httpRequest(httpMode: 'POST',
                                     url: "https://gitlab.socrate.vsct.fr/api/v4/projects/hesperides%2Fteeproxy/repository/tags?private_token=${GITLAB_API_TOKEN}" +
                                          "&ref=master&tag_name=${params.RELEASE_VERSION}")
