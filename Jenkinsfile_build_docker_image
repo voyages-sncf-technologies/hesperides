@@ -52,7 +52,7 @@ pipeline {
                     // On affiche tous les labels de l'image générée :
                     sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
                     // On publie l'image sur artifactory :
-                    withCredentials([usernamePassword(credentialsId: 'usl_ci', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
                         sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
                     }

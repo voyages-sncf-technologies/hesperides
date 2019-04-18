@@ -27,7 +27,7 @@ pipeline {
                         branch: params.GIT_BRANCH)
                 }
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'usl_ci', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
                         sh "cat vsct-hesperides-gui/Dockerfile.append >> hesperides-gui/Dockerfile && rm vsct-hesperides-gui/Dockerfile.append"
                         sh "cp -r vsct-hesperides-gui/* hesperides-gui/"

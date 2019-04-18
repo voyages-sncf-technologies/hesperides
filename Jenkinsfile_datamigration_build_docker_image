@@ -39,7 +39,7 @@ pipeline {
                             sh 'mvn clean package'
                         }
                     }
-                    withCredentials([usernamePassword(credentialsId: 'usl_ci', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         docker.withRegistry("https://hesperides-docker-all.artifact.cloud.socrate.vsct.fr") {
                             sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
                             sh "docker build --force-rm --no-cache --pull --label git_commit=`git rev-parse --short HEAD` --label tuyauterie_git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} . -t hesperides/hesperides-data-migration:${params.DOCKER_TAG}"
