@@ -17,7 +17,6 @@ pipeline {
     parameters {
         string(name: 'auth', defaultValue: 'hesperides', description: """user:password (ex: "tech:password") ou simplement un credentialsId d'où tirer le user/password""")
         choice(name: "platform", choices: platformsList, description: 'Plateforme sur laquelle sera fait le test de charge')
-        choice(name: "container", choices: ['teeproxy', 'vsct-hesperides'])
         string(name: 'warmUpDuration', defaultValue: '30s')
         string(name: 'duration', defaultValue: '5min')
         string(name: 'usersPerSecond', defaultValue: '4')
@@ -32,7 +31,7 @@ pipeline {
                         branch: 'develop')
 
                     platformContainers = readJSON(text: horsprodtoolbox.yPath("/HES/${params.platform}/DOCKER").toString()).result  // http://toolbox-server.socrate.vsct.fr/horsprod/api/toolbox?function=ypath&args=/HES/REL1/DOCKER
-                    host = platformContainers.find { it.IMAGE.contains('/'+params.container+':') }.HOSTS[0]
+                    host = platformContainers.find { it.IMAGE.contains('/vsct-hesperides:') }.HOSTS[0]
                     hostPort = "${host.NAME.toLowerCase()}:${host.INSTANCES[0].PORTS[0].split(':')[0]}"
 
                     if (params.auth.contains(':')) {

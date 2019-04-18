@@ -21,14 +21,6 @@ _cf._ [vsct-hesperides-gui/Dockerfile](vsct-hesperides-gui/Dockerfile)
 - `Jenkinsfile_build_docker_image_nigthly` ([job jenkins](https://usl.jenkins.cloud.socrate.vsct.fr/job/A_USL/job/Hesperides/job/build_docker_image_nigthly/)):
 Déclenche le job précédent toutes les nuits
 
-- `Jenkinsfile_datamigration_build_docker_image` ([job jenkins](https://master.jenkins.cloud.socrate.vsct.fr/job/A_HESPERIDES/job/data-migration/job/build_docker_image/)):
-Pipeline de création de l'image d'[hesperides-data-migration pour VSCT](https://github.com/voyages-sncf-technologies/hesperides-data-migration) pour publication sur le dépôt Docker interne :
-construit l'image depuis le repo GitHub public, et la pushe vers Artifactory.
-
-- `Jenkinsfile_teeproxy_build_docker_image` ([job jenkins](https://master.jenkins.cloud.socrate.vsct.fr/job/A_HESPERIDES/job/teeproxy/job/build_docker_image/)):
-Pipeline de création de l'image du [teeproxy](https://gitlab.socrate.vsct.fr/hesperides/teeproxy) pour publication sur le dépôt Docker interne :
-construit l'image depuis le repo Gitlab, et la pushe vers Artifactory.
-
 ### Pipelines de release
 
 - `Jenkinsfile_release` ([job jenkins](https://usl.jenkins.cloud.socrate.vsct.fr/job/A_USL/job/Hesperides/job/release/)):
@@ -37,8 +29,8 @@ construit l'image depuis le repo Gitlab, et la pushe vers Artifactory.
   * cette release doit déclencher la création d'une nouvelle image Docker taguée sur le [Dockerhub public](https://hub.docker.com/r/hesperides/hesperides/)
   * effectue la montée de version aplicative dans les `pom.xml`
   * merge & push de cette release sur les branches `develop` & `master` (c'est le "git workflow" classique)
-  * crée un tag git correspondant à la release sur chacun des 3 repos
-  * déclenche les 4 jobs `Jenkinsfile*_build_docker_image*` pour générer les images Docker des 4 composants pour cette release
+  * crée un tag git correspondant à la release sur le repo Github
+  * déclenche les 4 jobs `Jenkinsfile*_build_docker_image*` pour générer les images Docker des 2 composants pour cette release
 
 ### Pipelines de déploiement
 
