@@ -2,10 +2,6 @@
 
 @Library(["rundeck", "toolbox-yaml"]) _
 
-app = "HES"
-node {
-    platformsList = horsprodtoolbox.getEnvironments(app).join('\n')
-}
 pipeline {
     agent {
         node {
@@ -15,8 +11,12 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
+    triggers {
+        // AFTER build crons
+        cron('0 6 * * 1-5')
+    }
     parameters {
-        choice(choices: platformsList, name: "PLATFORM", description: "OBLIGATOIRE : Plateforme sur laquelle sera fait le déploiement")
+        choice(choices: ['REL1'], name: "PLATFORM", description: "OBLIGATOIRE : Plateforme sur laquelle sera fait le déploiement")
     }
     stages {
         stage('Initialisation des Paramètres') {
@@ -60,10 +60,10 @@ pipeline {
                                 Map optionsRundeck = [
                                         composant  : "DOCKER-${dockerContainer.IMAGE}",
                                         instances  : instance.NAME,
-                                        trigramme  : app,
+                                        trigramme  : 'HES',
                                         techno     : "DOCKER",
-                                        TargetNodes: "${app}${params.PLATFORM}DOCKER${dockerContainer.IMAGE}-${host.NAME}",
-                                        plateforme : platform,
+                                        TargetNodes: "HES${params.PLATFORM}DOCKER${dockerContainer.IMAGE}-${host.NAME}",
+                                        plateforme : params.PLATFORM,
                                         serveur    : host.NAME.toLowerCase(),
                                 ]
                                 pprundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
