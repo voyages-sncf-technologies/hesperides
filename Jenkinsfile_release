@@ -71,6 +71,7 @@ pipeline {
                         sh "git config user.name hesperides-adm"
                         sh "git checkout develop"
                         sh "git merge origin/release/${params.RELEASE_VERSION}"
+                        sh "pip install gitchangelog pystache && gitchangelog"
                         sh "sed -i 's~<version>${params.RELEASE_VERSION}</version>~<version>${params.RELEASE_VERSION}-SNAPSHOT</version>~' pom.xml */pom.xml */*/pom.xml"
                         sh "git commit -am 'Version bump to ${params.RELEASE_VERSION}-SNAPSHOT'"
                         sh "git push https://${USERNAME}:${PASSWORD}@github.com/voyages-sncf-technologies/hesperides.git"

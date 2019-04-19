@@ -18,9 +18,6 @@ Pipeline de création de l'image d'[hesperides-gui](https://github.com/voyages-s
 récupère l'image Docker du [Dockerhub public](https://hub.docker.com/r/hesperides/hesperides-gui/) pour la surcharger avec le certificat de l'Active Directory, et la pusher vers Artifactory.
 _cf._ [vsct-hesperides-gui/Dockerfile](vsct-hesperides-gui/Dockerfile)
 
-- `Jenkinsfile_build_docker_image_nigthly` ([job jenkins](https://usl.jenkins.cloud.socrate.vsct.fr/job/A_USL/job/Hesperides/job/build_docker_image_nigthly/)):
-Déclenche le job précédent toutes les nuits
-
 ### Pipelines de release
 
 - `Jenkinsfile_release` ([job jenkins](https://usl.jenkins.cloud.socrate.vsct.fr/job/A_USL/job/Hesperides/job/release/)):
@@ -38,14 +35,14 @@ Déclenche le job précédent toutes les nuits
   * déploie l'image Docker correspondante au YAML (_cf._ [Environments.md](Environments.md)) via [le job pprundeck HES/Outils/refresh_puppet_agent](https://pprundeck.socrate.vsct.fr/rundeck/project/HES/job/show/03662b77-5169-4828-96e8-8ba855d6c441)
   * exécute [le job pprundeck HES/Outils/RESTART](https://pprundeck.socrate.vsct.fr/rundeck/project/HES/job/show/c9f92ce5-2d20-4a57-9cb8-8e88aae5412f) qui effectue un `./SHUT && ./BOOT`
 
-- `Jenkinsfile_deploy_nightly_dev` ([job jenkins](https://usl.jenkins.cloud.socrate.vsct.fr/job/A_USL/job/Hesperides/job/deploy_nightly_dev/)):
-déclenche le job `Jenkinsfile_deploy` sur `REL1` toutes les nuits
-
-- `Jenkinsfile_deploy_nightly_int` ([job jenkins](https://usl.jenkins.cloud.socrate.vsct.fr/job/A_USL/job/Hesperides/job/deploy_nightly_int/)):
-déclenche le job `Jenkinsfile_deploy` sur `INT1` toutes les nuits
-
 - `Jenkinsfile_deploy@PROD` ([job jenkins](https://master.jenkins.cloud.socrate.vsct.fr/job/A_HESPERIDES@PROD/job/deploy/)):
 identique à `Jenkinsfile_deploy` mais sur `PRD1`
+
+### Autres pipelines
+
+- `Jenkinsfile_perf_tests` : lance les stress tests Gatling sur une plateforme
+
+- `Jenkinsfile_zap` : _work in progress_ - tentative d'intégration du proxy [Zap de l'OWASP](https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project) avec l'aide de Martin De Roquefeuil
 
 ## Tips
 
