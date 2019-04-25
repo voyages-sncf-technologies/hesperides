@@ -61,7 +61,9 @@ pipeline {
             }
         }
         stage('Executing unit tests') {
-            // TODO
+            steps {
+                echo('TODO')
+            }
         }
         stage('Trigger deploy of "testing" to REL1') {
             steps {
@@ -70,13 +72,17 @@ pipeline {
             }
         }
         stage('Executing non-regression integration tests') {
-            // TODO
+            steps {
+                echo('TODO')
+            }
         }
         stage('Promoting "testing" to "latest"') {
-            withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
-                sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:testing hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
-                sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
+                    sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:testing hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
+                    sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
+                }
             }
         }
     }
