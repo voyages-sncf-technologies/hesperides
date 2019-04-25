@@ -89,7 +89,7 @@ pipeline {
         }
         stage('Trigger hesperides-gui image generation for this release') {
             steps {
-                build job: "build_docker_image_for_gui", parameters: [[$class: 'StringParameterValue', name: 'DOCKER_TAG', value: "v${params.RELEASE_VERSION}"]]
+                build job: "build_docker_image_for_gui", parameters: [string(name: 'DOCKER_TAG', value: "v${params.RELEASE_VERSION}")]
             }
         }
     }

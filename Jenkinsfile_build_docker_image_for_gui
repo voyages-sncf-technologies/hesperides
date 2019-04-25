@@ -2,6 +2,8 @@
 
 @Library(["notifications"]) _
 
+import java.text.SimpleDateFormat
+
 pipeline {
     agent {
         node {
@@ -12,15 +14,19 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     triggers {
-        // BEFORE deploy crons
-        cron('0 1 * * 1-5')
+        // Le repo GitHub est bien surveillé, et non celui contenant ce Jenkinsfile
+        // -> c'est documenté ici: https://github.com/jenkinsci/workflow-scm-step-plugin/blob/master/README.md#changelogs
+        // "Jenkins will automatically remember the SCMs run in the last build of the project"
+        pollSCM('H */5 * * 1-5')
+    }
+    environment {
+        DATE = (new SimpleDateFormat("yyyy-MM-dd")).format(new Date())
     }
     parameters {
         string(name: 'GIT_BRANCH', defaultValue: 'master', description: 'identify source code version')
-        string(name: 'DOCKER_TAG', defaultValue: 'latest', description: 'Branch or version tag starting with a "v"')
     }
     stages {
-        stage('Build docker image') {
+        stage('Build Docker image') {
             steps {
                 dir ('hesperides-gui') {
                     git(url: 'https://github.com/voyages-sncf-technologies/hesperides-gui',
@@ -31,12 +37,20 @@ pipeline {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
                         sh "cat vsct-hesperides-gui/Dockerfile.append >> hesperides-gui/Dockerfile && rm vsct-hesperides-gui/Dockerfile.append"
                         sh "cp -r vsct-hesperides-gui/* hesperides-gui/"
-                        sh "docker build --no-cache --pull --label git_commit=\$(cd hesperides-gui && git rev-parse --short HEAD) --label tuyauterie_git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --build-arg DOCKER_TAG=${params.DOCKER_TAG} ./hesperides-gui -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${params.DOCKER_TAG}"
+                        sh "docker build --no-cache --pull --label git_commit=\$(cd hesperides-gui && git rev-parse --short HEAD) --label tuyauterie_git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --label date=${DATE} ./hesperides-gui -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${env.DATE}"
                         // Displaying all the labels of the image:
                         sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${params.DOCKER_TAG}"
-                        sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${params.DOCKER_TAG}"
+                        sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${env.DATE}"
+                        sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${env.DATE} hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:latest"
+                        sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:latest"
                     }
                 }
+            }
+        }
+        stage('Trigger deploy to REL1') {
+            steps {
+                build job: "deploy", parameters: [string(name: 'DOCKER_TAG', value: "latest"),
+                                                  string(name: 'DOCKER_TAG', value: "REL1")]
             }
         }
     }

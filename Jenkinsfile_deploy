@@ -12,13 +12,23 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     triggers {
-        // AFTER build crons
         cron('0 6 * * 1-5')
     }
     parameters {
-        choice(choices: ['REL1'], name: "PLATFORM", description: "OBLIGATOIRE : Plateforme sur laquelle sera fait le déploiement")
+        string(name: 'DOCKER_TAG', defaultValue: 'latest',    description: 'latest ou yyyy-MM-dd')
+        // Le premier choix est utilisé comme valeur par défaut, y compris lors de l'exécution cronnée :
+        choice(name: 'PLATFORM',   choices: ['PRD1', 'REL1'], description: 'OBLIGATOIRE : Plateforme sur laquelle sera fait le déploiement')
     }
     stages {
+        stage('Tag & push Docker image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
+                    sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG} hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.PLATFORM}"
+                    sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.PLATFORM}"
+                }
+            }
+        }
         stage('Initialisation des Paramètres') {
             steps {
                 script {
@@ -38,7 +48,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy docker image') {
+        stage('Deploy Docker image') {
             steps {
                 script {
                     dockerHosts.each { host ->
@@ -51,7 +61,7 @@ pipeline {
                 }
             }
         }
-        stage('Restart docker image') {
+        stage('Restart Docker image') {
             steps {
                 script {
                     for (dockerContainer in platformContainers) {

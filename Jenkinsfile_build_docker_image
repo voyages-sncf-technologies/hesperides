@@ -2,12 +2,7 @@
 
 @Library(["notifications"]) _
 
-/**
- * Pipeline de création de l'image Docker pour VSCT :
- * Construit l'image Docker à partir du repo Github
- * en ajoutant le certificat de l'Active Directory,
- * pui la push vers le dépôt VSCT (Artifactory).
- */
+import java.text.SimpleDateFormat
 
 pipeline {
     agent {
@@ -19,15 +14,19 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     triggers {
-        // BEFORE deploy crons
-        cron('0 1 * * 1-5')
+        // Le repo GitHub est bien surveillé, et non celui contenant ce Jenkinsfile
+        // -> c'est documenté ici: https://github.com/jenkinsci/workflow-scm-step-plugin/blob/master/README.md#changelogs
+        // "Jenkins will automatically remember the SCMs run in the last build of the project"
+        pollSCM('H */5 * * 1-5')
+    }
+    environment {
+        DATE = (new SimpleDateFormat("yyyy-MM-dd")).format(new Date())
     }
     parameters {
         string(name: 'GIT_BRANCH', defaultValue: 'develop', description: 'identify source code version')
-        string(name: 'DOCKER_TAG', defaultValue: 'develop', description: 'Branch or version tag starting with a "v"')
     }
     stages {
-        stage('Build docker image') {
+        stage('Build Docker image') {
             steps {
                 dir ('hesperides') {
                     git(url: 'https://github.com/voyages-sncf-technologies/hesperides',
@@ -40,23 +39,31 @@ pipeline {
                     sh 'cat vsct-hesperides/Dockerfile.append >> hesperides/Dockerfile && rm vsct-hesperides/Dockerfile.append'
                     sh 'cp -r vsct-hesperides/* hesperides/'
                     // On définit les labels et on passe les variables d'environnement des proxys HTTP
-                    def proxyBuildArgs = "--build-arg http_proxy --build-arg https_proxy --build-arg DOCKER_TAG"
+                    def proxyBuildArgs = "--build-arg http_proxy --build-arg https_proxy"
                     def hesperidesGitCommit = sh(returnStdout: true, script: 'cd hesperides && git rev-parse --short HEAD').trim()
-                    def labelArgs = "--label git_commit=${hesperidesGitCommit} --label tuyauterie_git_commit=${GIT_COMMIT}"
+                    def labelArgs = "--label git_commit=${hesperidesGitCommit} --label tuyauterie_git_commit=${GIT_COMMIT} --label date=${DATE}"
                     // On build l'image Docker :
                     withMaven(globalMavenSettingsConfig: 'global_maven_settings', mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
                         sh 'cp $MVN_SETTINGS hesperides/settings.xml'
                         sh 'cp $GLOBAL_MVN_SETTINGS hesperides/globalSettings.xml'
-                        sh "docker build --no-cache --pull ${labelArgs} ${proxyBuildArgs} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
+                        sh "docker build --no-cache --pull ${labelArgs} ${proxyBuildArgs} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE}"
                     }
                     // On affiche tous les labels de l'image générée :
-                    sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
+                    sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE}"
                     // On publie l'image sur artifactory :
                     withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
-                        sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${params.DOCKER_TAG}"
+                        sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE}"
+                        sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE} hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
+                        sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
                     }
                 }
+            }
+        }
+        stage('Trigger deploy to REL1') {
+            steps {
+                build job: "deploy", parameters: [string(name: 'DOCKER_TAG', value: "latest"),
+                                                  string(name: 'DOCKER_TAG', value: "REL1")]
             }
         }
     }
