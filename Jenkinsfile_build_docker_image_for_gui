@@ -39,7 +39,7 @@ pipeline {
                         sh "cp -r vsct-hesperides-gui/* hesperides-gui/"
                         sh "docker build --no-cache --pull --label git_commit=\$(cd hesperides-gui && git rev-parse --short HEAD) --label tuyauterie_git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --label date=${DATE} ./hesperides-gui -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${env.DATE}"
                         // Displaying all the labels of the image:
-                        sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${params.DOCKER_TAG}"
+                        sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${env.DATE}"
                         sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${env.DATE}"
                         sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:${env.DATE} hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:latest"
                         sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui:latest"
@@ -50,7 +50,7 @@ pipeline {
         stage('Trigger deploy to REL1') {
             steps {
                 build job: "deploy", parameters: [string(name: 'DOCKER_TAG', value: "latest"),
-                                                  string(name: 'DOCKER_TAG', value: "REL1")]
+                                                  string(name: 'PLATFORM', value: "REL1")]
             }
         }
     }
