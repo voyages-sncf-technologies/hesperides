@@ -2,9 +2,8 @@
 
 @Library(["rundeck", "toolbox-yaml"]) _
 
-app = "HES"
 node('prod') {
-    platformsList = prodtoolbox.getEnvironments(app).join('\n')
+    platformsList = prodtoolbox.getEnvironments('HES').join('\n')
 }
 pipeline {
     agent {
@@ -12,10 +11,15 @@ pipeline {
             label 'prod'
         }
     }
+    triggers {
+        cron('0 3 * * 1-5')
+    }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
     }
     parameters {
+        // Le premier choix est utilisé comme valeur par défaut, y compris lors de l'exécution cronnée :
         choice(choices: platformsList, name: "PLATFORM", description: "OBLIGATOIRE : Plateforme sur laquelle sera fait le déploiement")
     }
     stages {
@@ -23,15 +27,12 @@ pipeline {
             steps {
                 script {
                     // Set params as they will be used later
-                    dockers = prodtoolbox.yPath("/${app}/${params.PLATFORM}/DOCKER")
-                    dockersJson = readJSON text: "${dockers}"
+                    platformContainers = readJSON(text: prodtoolbox.yPath("/HES/${params.PLATFORM}/DOCKER").toString()).result  // http://toolbox-server.socrate.vsct.fr/prod/api/toolbox?function=ypath&args=/HES/PRD1/DOCKER
+                    dockerHosts = platformContainers.HOSTS.collect { it.NAME } as Set
 
                     // Set user
                     wrap([$class: 'BuildUser']) {
-                        user = env.BUILD_USER_ID
-                        if (user == null) {
-                            user = "jenkins"
-                        }
+                        user = env.BUILD_USER_ID ?: 'jenkins'
                     }
                     rundeck.setRundeckUser(user)
                     // Set up Rundeck token
@@ -41,37 +42,33 @@ pipeline {
                 }
             }
         }
-        stage('Deploy docker image') {
+        stage('Puppet refresh') {
             steps {
                 script {
-                    for (docker in dockersJson['result']) {
-                        for (host in docker['HOSTS']) {
-                            Map optionsRundeck = [
-                                    refresh_puppet_agent: "complet",
-                                    serveur             : [host['NAME'].toLowerCase()]
-                            ]
-                            rundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
-                        }
+                    dockerHosts.each { host ->
+                        Map optionsRundeck = [
+                                refresh_puppet_agent: "complet",
+                                serveur             : [host[0].toLowerCase()]
+                        ]
+                        rundeck.startAndWaitWithAutofill("HES", "Outils/refresh_puppet_agent", optionsRundeck)
                     }
                 }
             }
         }
-        stage('Restart docker image') {
+        stage('Restart Docker image') {
             steps {
                 script {
-                    for (docker in dockersJson['result']) {
-                        for (host in docker['HOSTS']) {
-                            for (instance in host['INSTANCES']) {
+                    for (dockerContainer in platformContainers) {
+                        for (host in dockerContainer.HOSTS) {
+                            for (instance in host.INSTANCES) {
                                 Map optionsRundeck = [
-                                        composant  : "DOCKER-${docker["IMAGE"]}",
-                                        instances  : instance['NAME'],
-                                        trigramme  : app,
+                                        composant  : "DOCKER-${dockerContainer.IMAGE}",
+                                        instances  : instance.NAME,
+                                        trigramme  : 'HES',
                                         techno     : "DOCKER",
-                                        TargetNodes: "${app}${params.PLATFORM}DOCKER${docker["IMAGE"]}-${host['NAME']}",
-                                        plateforme : platform,
-                                        serveur    : host['NAME'].toLowerCase(),
-
-
+                                        TargetNodes: "HES${params.PLATFORM}DOCKER${dockerContainer.IMAGE}-${host.NAME}",
+                                        plateforme : params.PLATFORM,
+                                        serveur    : host.NAME.toLowerCase(),
                                 ]
                                 rundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
                             }

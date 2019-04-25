@@ -54,16 +54,29 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
                         sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE}"
-                        sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE} hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
-                        sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
+                        sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE} hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:testing"
+                        sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:testing"
                     }
                 }
             }
         }
-        stage('Trigger deploy to REL1') {
+        stage('Executing unit tests') {
+            // TODO
+        }
+        stage('Trigger deploy of "testing" to REL1') {
             steps {
-                build job: "deploy", parameters: [string(name: 'DOCKER_TAG', value: "latest"),
+                build job: "deploy", parameters: [string(name: 'DOCKER_TAG', value: "testing"),
                                                   string(name: 'PLATFORM', value: "REL1")]
+            }
+        }
+        stage('Executing non-regression integration tests') {
+            // TODO
+        }
+        stage('Promoting "testing" to "latest"') {
+            withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
+                sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:testing hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
+                sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
             }
         }
     }
