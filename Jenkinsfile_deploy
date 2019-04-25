@@ -13,7 +13,7 @@ pipeline {
         disableConcurrentBuilds()
     }
     triggers {
-        cron('30 2 * * 1-5')
+        cron('0 3 * * 1-5')
     }
     parameters {
         string(name: 'DOCKER_TAG', defaultValue: 'latest',    description: 'latest ou yyyy-MM-dd')
