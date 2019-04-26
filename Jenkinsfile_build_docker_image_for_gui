@@ -21,12 +21,13 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME = 'hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui'
         DATE = (new SimpleDateFormat("yyyy-MM-dd")).format(new Date())
+        BUILD_TIME = (new SimpleDateFormat("yyyy:MM:dd-HH-mm-ss")).format(new Date())
     }
     parameters {
         string(name: 'GIT_BRANCH', defaultValue: 'master', description: 'identify source code version')
     }
     stages {
-        stage('Docker build image') {
+        stage("Docker build 'testing' image") {
             steps {
                 dir ('hesperides-gui') {
                     git(url: 'https://github.com/voyages-sncf-technologies/hesperides-gui',
@@ -39,12 +40,10 @@ pipeline {
                         sh "cp -r vsct-hesperides-gui/* hesperides-gui/"
                         def proxyBuildArgs = "--build-arg http_proxy --build-arg https_proxy"
                         def hesperidesGuiGitCommit = sh(returnStdout: true, script: 'cd hesperides-gui && git rev-parse --short HEAD').trim()
-                        def labelArgs = "--label git_commit=${hesperidesGuiGitCommit} --label tuyauterie_git_commit=${GIT_COMMIT} --label date=${DATE}"
-                        sh "docker build --no-cache --pull ${labelArgs} ${proxyBuildArgs} ./hesperides-gui -t $DOCKER_IMAGE_NAME:${DATE}"
+                        def labelArgs = "--label git_commit=${hesperidesGuiGitCommit} --label tuyauterie_git_commit=${GIT_COMMIT} --label build_time=${BUILD_TIME}"
+                        sh "docker build --no-cache --pull ${labelArgs} ${proxyBuildArgs} ./hesperides-gui -t $DOCKER_IMAGE_NAME:testing"
                         // Displaying all the labels of the image:
-                        sh "docker inspect --format '{{.ContainerConfig.Labels}}' $DOCKER_IMAGE_NAME:${env.DATE}"
-                        sh "docker push $DOCKER_IMAGE_NAME:${env.DATE}"
-                        sh "docker tag $DOCKER_IMAGE_NAME:${env.DATE} $DOCKER_IMAGE_NAME:testing"
+                        sh "docker inspect --format '{{.ContainerConfig.Labels}}' $DOCKER_IMAGE_NAME:testing"
                         sh "docker push $DOCKER_IMAGE_NAME:testing"
                     }
                 }
