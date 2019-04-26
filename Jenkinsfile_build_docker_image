@@ -10,6 +10,7 @@ pipeline {
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
     }
     triggers {
         // Le repo GitHub est bien surveillé, et non celui contenant ce Jenkinsfile

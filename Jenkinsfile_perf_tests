@@ -13,6 +13,7 @@ pipeline {
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
     }
     parameters {
         string(name: 'auth', defaultValue: 'hesperides', description: """user:password (ex: "tech:password") ou simplement un credentialsId d'où tirer le user/password""")

@@ -12,6 +12,7 @@ pipeline {
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
     }
     stages {
         stage("Pull Project") {
