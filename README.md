@@ -24,7 +24,7 @@ _cf._ [vsct-hesperides-gui/Dockerfile](vsct-hesperides-gui/Dockerfile)
   * déclenche un Puppet refresh (_cf._ [Environments.md](Environments.md)) via [le job pprundeck HES/Outils/refresh_puppet_agent](https://pprundeck.socrate.vsct.fr/rundeck/project/HES/job/show/03662b77-5169-4828-96e8-8ba855d6c441)
   * redémarre les instances pour tirer la dernière version en exécutant [le job pprundeck HES/Outils/RESTART](https://pprundeck.socrate.vsct.fr/rundeck/project/HES/job/show/c9f92ce5-2d20-4a57-9cb8-8e88aae5412f) qui effectue un `./SHUT && ./BOOT`
 
-- `Jenkinsfile_deploy@PROD` ([job jenkins](https://master.jenkins.cloud.socrate.vsct.fr/job/A_HESPERIDES@PROD/job/deploy/)):
+- `Jenkinsfile_deploy@PROD` ([job jenkins](https://usl.jenkins.cloud.socrate.vsct.fr/job/A_USL@PROD/job/Hesperides/job/deploy_PROD/)):
 identique à `Jenkinsfile_deploy` mais sur `PRD1`, et se déclenchant toutes les nuits
 
 ### Autres pipelines
