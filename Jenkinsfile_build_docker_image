@@ -27,7 +27,7 @@ pipeline {
         string(name: 'GIT_BRANCH', defaultValue: 'master', description: 'identify source code version')
     }
     stages {
-        stage('Build Docker image') {
+        stage('Docker build image') {
             steps {
                 dir ('hesperides') {
                     git(url: 'https://github.com/voyages-sncf-technologies/hesperides',
@@ -61,23 +61,37 @@ pipeline {
                 }
             }
         }
-        stage('Executing unit tests') {
+        stage('Tests unitaires') {
             steps {
                 echo('TODO')
             }
         }
-        stage('Trigger deploy of "testing" to REL1') {
+        stage('Déploiement de "testing" sur REL1') {
             steps {
                 build job: "deploy", parameters: [string(name: 'DOCKER_TAG', value: "testing"),
                                                   string(name: 'PLATFORM', value: "REL1")]
             }
         }
-        stage('Executing non-regression integration tests') {
+        stage("Tests d'intégration et de non-regression") {
             steps {
                 echo('TODO')
             }
         }
-        stage('Promoting "testing" to "latest"') {
+        stage('Création/mise à jour du tag sur repo GitHub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github-hesperides-adm', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        // Le tag peut déjà exister, on essaie donc de le supprimer au préalable
+                        sh "git config user.name 'Jenkins pipeline'"
+                        sh "git tag -d $DATE || true"
+                        sh "git push https://${USERNAME}:${PASSWORD}@github.com/voyages-sncf-technologies/hesperides.git --delete $DATE || true"
+                        sh "git tag $DATE"
+                        sh "git push https://${USERNAME}:${PASSWORD}@github.com/voyages-sncf-technologies/hesperides.git --tags"
+                    }
+                }
+            }
+        }
+        stage("Promotion de l'image Docker 'testing' en 'latest'") {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
