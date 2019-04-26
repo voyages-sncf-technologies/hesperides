@@ -1,0 +1,33 @@
+#!groovy
+
+pipeline {
+    agent {
+        node {
+            label 'docker'
+        }
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    parameters {
+        string(name: 'DOCKER_IMAGE_NAME')
+        string(name: 'FROM_TAG', description: 'testing ou yyyy-MM-dd')
+        choice(name: 'NEW_TAG', choices: ['latest', 'testing'])
+    }
+    stages {
+        stage("Promotion de l'image Docker) {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
+                    sh "docker tag $DOCKER_IMAGE_NAME:testing $DOCKER_IMAGE_NAME:latest"
+                    sh "docker push $DOCKER_IMAGE_NAME:latest"
+                }
+            }
+        }
+    }
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}

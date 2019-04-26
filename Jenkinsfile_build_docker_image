@@ -1,7 +1,5 @@
 #!groovy
 
-@Library(["notifications"]) _
-
 import java.text.SimpleDateFormat
 
 pipeline {
@@ -88,11 +86,9 @@ pipeline {
         }
         stage("Promotion de l'image Docker 'testing' en 'latest'") {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
-                    sh "docker tag $DOCKER_IMAGE_NAME:testing $DOCKER_IMAGE_NAME:latest"
-                    sh "docker push $DOCKER_IMAGE_NAME:latest"
-                }
+                build job: "promote", parameters: [string(name: 'DOCKER_IMAGE_NAME', value: env.DOCKER_IMAGE_NAME),
+                                                   string(name: 'FROM_TAG', value: 'testing'),
+                                                   string(name: 'NEW_TAG', value: 'latest')]
             }
         }
     }
