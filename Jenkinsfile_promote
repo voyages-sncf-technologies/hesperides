@@ -15,7 +15,7 @@ pipeline {
         choice(name: 'NEW_TAG', choices: ['latest', 'testing'])
     }
     stages {
-        stage("Promotion de l'image Docker) {
+        stage("Promotion de l'image Docker") {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
