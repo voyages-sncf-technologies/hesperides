@@ -38,7 +38,10 @@ pipeline {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
                         sh "cat vsct-hesperides-gui/Dockerfile.append >> hesperides-gui/Dockerfile && rm vsct-hesperides-gui/Dockerfile.append"
                         sh "cp -r vsct-hesperides-gui/* hesperides-gui/"
-                        sh "docker build --no-cache --pull --label git_commit=\$(cd hesperides-gui && git rev-parse --short HEAD) --label tuyauterie_git_commit=${GIT_COMMIT} --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${http_proxy} --label date=${DATE} ./hesperides-gui -t $DOCKER_IMAGE_NAME:${DATE}"
+                        def proxyBuildArgs = "--build-arg http_proxy --build-arg https_proxy --build-arg TZ=Europe/Paris"
+                        def hesperidesGuiGitCommit = sh(returnStdout: true, script: 'cd hesperides-gui && git rev-parse --short HEAD').trim()
+                        def labelArgs = "--label git_commit=${hesperidesGuiGitCommit} --label tuyauterie_git_commit=${GIT_COMMIT} --label date=${DATE}"
+                        sh "docker build --no-cache --pull ${labelArgs} ${proxyBuildArgs} ./hesperides-gui -t $DOCKER_IMAGE_NAME:${DATE}"
                         // Displaying all the labels of the image:
                         sh "docker inspect --format '{{.ContainerConfig.Labels}}' $DOCKER_IMAGE_NAME:${env.DATE}"
                         sh "docker push $DOCKER_IMAGE_NAME:${env.DATE}"
