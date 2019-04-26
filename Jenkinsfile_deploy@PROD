@@ -70,7 +70,7 @@ pipeline {
                                         plateforme : params.PLATFORM,
                                         serveur    : host.NAME.toLowerCase(),
                                 ]
-                                rundeck.startAndWaitWithAutofill("HES", "Outils/RESTART", optionsRundeck)
+                                rundeck.startAndWaitWithAutofill("HES", "Outils/restart_docker", optionsRundeck)
                             }
                         }
                     }
