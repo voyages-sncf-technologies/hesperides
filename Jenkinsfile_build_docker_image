@@ -20,6 +20,7 @@ pipeline {
         pollSCM('H */5 * * 1-5')
     }
     environment {
+        DOCKER_IMAGE_NAME = 'hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides'
         DATE = (new SimpleDateFormat("yyyy-MM-dd")).format(new Date())
     }
     parameters {
@@ -46,16 +47,16 @@ pipeline {
                     withMaven(globalMavenSettingsConfig: 'global_maven_settings', mavenSettingsConfig: 'local_maven_settings') { // use https://artifact.socrate.vsct.fr/artifactory/all-mvn as a mirror
                         sh 'cp $MVN_SETTINGS hesperides/settings.xml'
                         sh 'cp $GLOBAL_MVN_SETTINGS hesperides/globalSettings.xml'
-                        sh "docker build --no-cache --pull ${labelArgs} ${proxyBuildArgs} ./hesperides -t hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE}"
+                        sh "docker build --no-cache --pull ${labelArgs} ${proxyBuildArgs} ./hesperides -t $DOCKER_IMAGE_NAME:${DATE}"
                     }
                     // On affiche tous les labels de l'image générée :
-                    sh "docker inspect --format '{{.ContainerConfig.Labels}}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE}"
+                    sh "docker inspect --format '{{.ContainerConfig.Labels}}' $DOCKER_IMAGE_NAME:${env.DATE}"
                     // On publie l'image sur artifactory :
                     withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
-                        sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE}"
-                        sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:${env.DATE} hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:testing"
-                        sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:testing"
+                        sh "docker push $DOCKER_IMAGE_NAME:${env.DATE}"
+                        sh "docker tag $DOCKER_IMAGE_NAME:${env.DATE} $DOCKER_IMAGE_NAME:testing"
+                        sh "docker push $DOCKER_IMAGE_NAME:testing"
                     }
                 }
             }
@@ -80,8 +81,8 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh "docker login --username ${USERNAME} --password '${PASSWORD}' hesperides-docker-all.artifact.cloud.socrate.vsct.fr"
-                    sh "docker tag hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:testing hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
-                    sh "docker push hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides:latest"
+                    sh "docker tag $DOCKER_IMAGE_NAME:testing $DOCKER_IMAGE_NAME:latest"
+                    sh "docker push $DOCKER_IMAGE_NAME:latest"
                 }
             }
         }
