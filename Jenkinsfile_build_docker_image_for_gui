@@ -17,7 +17,7 @@ pipeline {
         // Le repo GitHub est bien surveillé, et non celui contenant ce Jenkinsfile
         // -> c'est documenté ici: https://github.com/jenkinsci/workflow-scm-step-plugin/blob/master/README.md#changelogs
         // "Jenkins will automatically remember the SCMs run in the last build of the project"
-        pollSCM('H */5 * * 1-5')
+        pollSCM('H/5 * * * 1-5')
     }
     environment {
         DOCKER_IMAGE_NAME = 'hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides-gui'
