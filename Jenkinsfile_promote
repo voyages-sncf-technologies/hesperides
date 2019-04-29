@@ -1,5 +1,7 @@
 #!groovy
 
+import java.text.SimpleDateFormat
+
 pipeline {
     agent {
         node {
@@ -12,7 +14,7 @@ pipeline {
     }
     parameters {
         string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'hesperides-docker-all.artifact.cloud.socrate.vsct.fr/hesperides/vsct-hesperides')
-        string(name: 'FROM_TAG', description: 'testing ou yyyy-MM-dd')
+        string(name: 'FROM_TAG', defaultValue: 'testing', description: 'testing ou yyyy-MM-dd')
         choice(name: 'NEW_TAG', choices: ['latest', 'testing'])
     }
     environment {
@@ -28,7 +30,7 @@ pipeline {
                 }
             }
         }
-        stage("Publication d'une versionnée avec la date") {
+        stage("Publication d'une image versionnée avec la date") {
             when { expression { params.FROM_TAG == 'testing' && params.NEW_TAG == 'latest' } }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'artifact_admin', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
