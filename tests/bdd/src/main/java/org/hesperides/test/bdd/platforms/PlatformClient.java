@@ -335,10 +335,6 @@ public class PlatformClient {
         restTemplate.getForEntity("/applications/all_passwords", String.class);
     }
 
-    public void searchProperties(String propertyName, String propertyValue) {
-        searchProperties(propertyName, propertyValue, null);
-    }
-
     public void searchProperties(String propertyName, String propertyValue, String tryTo) {
         String url = "/applications/search_properties?" +
                 "property_name={property_name}&" +

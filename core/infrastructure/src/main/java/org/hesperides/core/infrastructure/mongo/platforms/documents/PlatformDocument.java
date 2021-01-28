@@ -236,8 +236,8 @@ public class PlatformDocument {
                         .filter(ValuedPropertyDocument.class::isInstance)
                         .map(ValuedPropertyDocument.class::cast)
                         .filter(property ->
-                                (isEmpty(propertyName) || property.getName().equals(propertyName)) &&
-                                        (isEmpty(propertyValue) || property.getValue().equals(propertyValue))
+                                (isEmpty(propertyName) || property.getName().contains(propertyName)) &&
+                                        (isEmpty(propertyValue) || property.getValue().contains(propertyValue))
                         ).map(property -> new PropertySearchResultView(
                                 property.getName(),
                                 property.getValue(),
