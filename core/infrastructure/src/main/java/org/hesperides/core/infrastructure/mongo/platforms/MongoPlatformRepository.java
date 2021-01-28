@@ -62,28 +62,17 @@ public interface MongoPlatformRepository extends MongoRepository<PlatformDocumen
     @Query(value = "{ }", fields = "{ 'key': 1, 'isProductionPlatform': 1, 'deployedModules.id': 1, 'deployedModules.propertiesPath': 1, 'deployedModules.valuedProperties': 1 }")
     List<PlatformDocument> findAllApplicationsPropertiesQuery();
 
-    // La raison pour laquelle il y a 3 requêtes pour la recherche de propriétés est que
-    // je n'ai pas réussi à rendre le nom et la valeur optionnels dans la clause `value`
-    String SEARCHED_PROPERTIES_FIELDS = "{" +
-            "   'key': 1," +
-            "   'isProductionPlatform': 1," +
-            "   'deployedModules.id': 1," +
-            "   'deployedModules.propertiesPath': 1," +
-            "   'deployedModules.valuedProperties': 1, " +
-            "}";
-
-    @Query(value = "{ 'deployedModules.valuedProperties.name': { '$regex': ?0, '$options': 'i' } }", fields = SEARCHED_PROPERTIES_FIELDS)
-    List<PlatformDocument> findPlatformsByPropertiesName(String propertyName);
-
-    @Query(value = "{ 'deployedModules.valuedProperties.value': { '$regex': ?0, '$options': 'i' } }", fields = SEARCHED_PROPERTIES_FIELDS)
-    List<PlatformDocument> findPlatformsByPropertiesValue(String propertyValue);
-
     @Query(
-            value = "{" +
-                    "   'deployedModules.valuedProperties.name': { '$regex': ?0, '$options': 'i' }," +
-                    "   'deployedModules.valuedProperties.value': { '$regex': ?1, '$options': 'i' }" +
+            value = "{ " +
+                    "'deployedModules.valuedProperties': { $elemMatch: { 'name': { '$regex': ?0, '$options': 'i' }, 'value': { '$regex': ?1, '$options': 'i' } } } " +
                     "}",
-            fields = SEARCHED_PROPERTIES_FIELDS
+            fields = "{" +
+                    "   'key': 1," +
+                    "   'isProductionPlatform': 1," +
+                    "   'deployedModules.id': 1," +
+                    "   'deployedModules.propertiesPath': 1," +
+                    "   'deployedModules.valuedProperties': 1, " +
+                    "}"
     )
     List<PlatformDocument> findPlatformsByPropertiesNameAndValue(String propertyName, String propertyValue);
 }

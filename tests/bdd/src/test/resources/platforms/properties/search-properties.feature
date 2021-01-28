@@ -144,13 +144,17 @@ Feature: Search properties
       | property     | value         | B               |
 
   #issue-872
-  Scenario: trying to search properties with less than 4 characters should fail
-    When I try to search for properties by name "abc"
+  Scenario: trying to search properties with less than 3 characters should fail
+    When I try to search for properties by name "ab"
     Then the request is rejected with a bad request error
-    When I try to search for properties by value "abc"
+    When I try to search for properties by value "ab"
     Then the request is rejected with a bad request error
-    When I try to search for properties by name "abc" and value "def"
+    When I try to search for properties by name "ab" and value "de"
     Then the request is rejected with a bad request error
+    When I try to search for properties by name "abc" and value "de"
+    Then the request is successful
+    When I try to search for properties by name "ab" and value "cde"
+    Then the request is successful
 
   #issue-872
   Scenario: search a property by partial name and/or value
@@ -175,3 +179,17 @@ Feature: Search properties
     Then the list of properties found is
       | propertyName    | propertyValue |
       | simple-property | simple-value  |
+
+#  Scenario: search a property by name
+#    Given an existing module
+#    And an existing platform with this module
+#    And the platform has these valued properties
+#      | name                    | value        |
+#      | simple-property         | simple-value |
+#      | another-property        | simple-value |
+#      | another-simple-property | other-value  |
+#    When I search for properties by name "simple-"
+#    Then the list of properties found is
+#      | propertyName            | propertyValue |
+#      | simple-property         | simple-value  |
+#      | another-simple-property | other-value   |

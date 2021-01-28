@@ -244,8 +244,8 @@ public class PropertiesController extends AbstractController {
         }
 
         int searchInputMinimumCharactersCount = 3;
-        if ((StringUtils.isNotBlank(propertyName) && propertyName.length() <= searchInputMinimumCharactersCount) ||
-                (StringUtils.isNotBlank(propertyValue) && propertyValue.length() <= searchInputMinimumCharactersCount)) {
+        // La règle est d'avoir au moins un des deux champs avec au moins trois caractères
+        if (propertyName.length() < searchInputMinimumCharactersCount && propertyValue.length() < searchInputMinimumCharactersCount) {
             throw new IllegalArgumentException("You have to search for a property's name and/or value with at least " +
                     searchInputMinimumCharactersCount + " characters");
         }

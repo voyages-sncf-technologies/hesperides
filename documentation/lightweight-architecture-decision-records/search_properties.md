@@ -20,8 +20,6 @@ LADR frontend: [Recherches de propriétés](https://github.com/voyages-sncf-tech
 * La possibilité de filtrer les résultats par application
 * Indiquer dans le retour de l'API, par propriété : son type (globale / de module / d'instance), ses annotations et s'il
   s'agit d'une propriété supprimée
-* Permettre d'effectuer la recherche en mode partial match ou regex, dans ce cas il faudra penser à demander à
-  l'utilisateur de renseigner au moins 3 caractères pour limiter l'impact sur les performances
 * Lorsqu'un utilisateur n'a pas les droits de prod globaux mais seulement sur certaines applications, afficher les mots
   de passe de prod en clair pour ces applications
 

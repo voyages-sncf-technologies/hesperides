@@ -451,17 +451,9 @@ public class MongoPlatformProjectionRepository implements PlatformProjectionRepo
     @Override
     @Timed
     public List<PropertySearchResultView> onSearchPropertiesQuery(SearchPropertiesQuery query) {
-        List<PlatformDocument> platformDocuments;
+        List<PlatformDocument> platformDocuments = platformRepository
+                .findPlatformsByPropertiesNameAndValue(query.getPropertyName(), query.getPropertyValue());
 
-//        if (isEmpty(query.getPropertyValue())) {
-//            platformDocuments = platformRepository.findPlatformsByPropertiesName(query.getPropertyName());
-//        } else if (isEmpty(query.getPropertyName())) {
-//            platformDocuments = platformRepository.findPlatformsByPropertiesValue(query.getPropertyValue());
-//        } else {
-//            platformDocuments = platformRepository.findPlatformsByPropertiesNameAndValue(query.getPropertyName(), query.getPropertyValue());
-//        }
-
-        platformDocuments = platformRepository.findPlatformsByPropertiesNameAndValue(query.getPropertyName(), query.getPropertyValue());
         return platformDocuments.stream()
                 .map(platformDocument -> platformDocument.filterToPropertySearchResultViews(
                         query.getPropertyName(), query.getPropertyValue()))
