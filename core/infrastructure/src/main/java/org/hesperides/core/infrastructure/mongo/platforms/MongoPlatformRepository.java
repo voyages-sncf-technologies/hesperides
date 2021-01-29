@@ -64,7 +64,12 @@ public interface MongoPlatformRepository extends MongoRepository<PlatformDocumen
 
     @Query(
             value = "{ " +
-                    "'deployedModules.valuedProperties': { $elemMatch: { 'name': { '$regex': ?0, '$options': 'i' }, 'value': { '$regex': ?1, '$options': 'i' } } } " +
+                    "   'deployedModules.valuedProperties': {" +
+                    "       $elemMatch: {" +
+                    "           'name': { '$regex': ?0, '$options': 'i' }," +
+                    "           'value': { '$regex': ?1, '$options': 'i' }" +
+                    "       }" +
+                    "   } " +
                     "}",
             fields = "{" +
                     "   'key': 1," +
