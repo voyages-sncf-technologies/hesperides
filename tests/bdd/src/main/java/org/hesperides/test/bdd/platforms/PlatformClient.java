@@ -336,9 +336,14 @@ public class PlatformClient {
     }
 
     public void searchProperties(String propertyName, String propertyValue, String tryTo) {
-        String url = "/applications/search_properties?" +
-                "property_name={property_name}&" +
-                "property_value={property_value}";
+        String url = "/applications/search_properties?";
+
+        if (propertyName != null) {
+            url += "property_name=" + propertyName + "&";
+        }
+        if (propertyValue != null) {
+            url += "property_value=" + propertyValue;
+        }
 
         restTemplate.getForEntity(url,
                 getResponseType(tryTo, PropertySearchResultOutput[].class),

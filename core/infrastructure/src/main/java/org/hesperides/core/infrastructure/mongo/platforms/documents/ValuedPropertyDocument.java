@@ -28,6 +28,7 @@ import org.hesperides.core.domain.platforms.entities.properties.ValuedProperty;
 import org.hesperides.core.domain.platforms.queries.views.properties.ValuedPropertyView;
 import org.hesperides.core.infrastructure.mongo.templatecontainers.AbstractPropertyDocument;
 import org.hesperides.core.infrastructure.mongo.templatecontainers.PropertyDocument;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.util.CollectionUtils;
 
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 @Document
 public class ValuedPropertyDocument extends AbstractValuedPropertyDocument {
 
+    @Indexed(background = true)
     private String value;
 
     private ValuedPropertyDocument(String name, String value) {

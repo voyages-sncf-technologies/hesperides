@@ -239,6 +239,9 @@ public class PropertiesController extends AbstractController {
             @RequestParam(value = "property_name", required = false) String propertyName,
             @RequestParam(value = "property_value", required = false) String propertyValue) {
 
+        propertyName = StringUtils.defaultString(propertyName, "");
+        propertyValue = StringUtils.defaultString(propertyValue, "");
+
         if (isBlank(propertyName) && isBlank(propertyValue)) {
             throw new IllegalArgumentException("Please type in a name and/or a value");
         }

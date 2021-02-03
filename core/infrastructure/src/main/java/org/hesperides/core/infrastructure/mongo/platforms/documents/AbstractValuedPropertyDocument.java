@@ -26,6 +26,7 @@ import org.hesperides.core.domain.platforms.entities.properties.IterableValuedPr
 import org.hesperides.core.domain.platforms.entities.properties.ValuedProperty;
 import org.hesperides.core.domain.platforms.queries.views.properties.AbstractValuedPropertyView;
 import org.hesperides.core.infrastructure.mongo.templatecontainers.AbstractPropertyDocument;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +37,7 @@ import static java.util.stream.Collectors.toList;
 @Data
 public abstract class AbstractValuedPropertyDocument {
 
+    @Indexed(background = true)
     protected String name;
 
     public static List<AbstractValuedPropertyDocument> fromAbstractDomainInstances(final List<AbstractValuedProperty> abstractValuedProperties) {
