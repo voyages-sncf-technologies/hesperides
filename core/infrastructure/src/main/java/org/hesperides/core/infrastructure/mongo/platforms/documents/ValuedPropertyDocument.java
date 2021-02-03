@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 @Document
 public class ValuedPropertyDocument extends AbstractValuedPropertyDocument {
 
-    @Indexed
+    @Indexed(background = true)
     private String value;
 
     private ValuedPropertyDocument(String name, String value) {
