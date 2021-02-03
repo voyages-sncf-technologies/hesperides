@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toList;
 @Data
 public abstract class AbstractValuedPropertyDocument {
 
-    @Indexed(background = true)
+    @Indexed
     protected String name;
 
     public static List<AbstractValuedPropertyDocument> fromAbstractDomainInstances(final List<AbstractValuedProperty> abstractValuedProperties) {
